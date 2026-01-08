@@ -808,10 +808,20 @@ class Sources():
 				debrid_function = self.debrid_importer(scrape_provider)
 				if any(i in scrape_provider for i in ('rd_', 'ad_', 'tb_')):
 					url = debrid_function().unrestrict_link(item_id)
+					if not url and scrape_provider == 'rd_cloud':
+						# Log error for Real-Debrid specifically
+						try:
+							from modules.kodi_utils import logger
+							if logger: logger('Real-Debrid resolve_internal', 'unrestrict_link returned None for item_id: %s' % str(item_id)[:100])
+						except: pass
 				else:
 					if '_cloud' in scrape_provider: item_id = debrid_function().get_item_details(item_id)['link']
 					url = debrid_function().add_headers_to_url(item_id)
-		except: pass
+		except Exception as e:
+			try:
+				from modules.kodi_utils import logger
+				if logger: logger('resolve_internal error', 'Provider: %s, Error: %s' % (scrape_provider, str(e)))
+			except: pass
 		return url
 
 	def _quality_length(self, items, quality):

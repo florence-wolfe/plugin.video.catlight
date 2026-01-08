@@ -8,7 +8,10 @@ from caches.settings_cache import get_setting, set_setting
 from modules.utils import copy2clip, make_tinyurl, make_qrcode
 from modules.source_utils import supported_video_extensions, seas_ep_filter, extras
 from modules.kodi_utils import sleep, ok_dialog, progress_dialog, notification
-# from modules.kodi_utils import logger
+try:
+	from modules.kodi_utils import logger
+except:
+	logger = None
 
 class RealDebridAPI:
 	def __init__(self):
@@ -152,10 +155,30 @@ class RealDebridAPI:
 		return self._get(url)
 
 	def unrestrict_link(self, link):
+		if not link:
+			if logger: logger('Real-Debrid unrestrict_link', 'Empty link provided')
+			return None
+		if self.token in ('empty_setting', ''):
+			if logger: logger('Real-Debrid unrestrict_link', 'No authentication token')
+			notification('Real-Debrid: Not authenticated', 5000)
+			return None
 		url = 'unrestrict/link'
 		post_data = {'link': link}
 		response = self._post(url, post_data)
+		if not response: return None
+		if not isinstance(response, dict):
+			if logger: logger('Real-Debrid unrestrict_link', 'Response is not a dict: %s' % str(type(response)))
+			return None
+		if 'error' in response:
+			error_msg = response.get('error', 'Unknown error')
+			if logger: logger('Real-Debrid unrestrict_link error', str(error_msg))
+			notification('Real-Debrid Error: %s' % str(error_msg), 5000)
+			return None
 		try: return response['download']
+		except KeyError:
+			if logger: logger('Real-Debrid unrestrict_link', 'No download key in response: %s' % str(response))
+			notification('Real-Debrid: Invalid response format', 5000)
+			return None
 		except: return None
 
 	def add_magnet(self, magnet):
@@ -328,8 +351,14 @@ class RealDebridAPI:
 		if any(value in response.text for value in ('bad_token', 'Bad Request')):
 			if self.refresh_token(): response = self._post(original_url, post_data)
 			else: return None
-		try: return response.json()
-		except: return response
+		try: 
+			json_response = response.json()
+			return json_response
+		except ValueError:
+			# Response is not valid JSON, log the error
+			if logger: logger('Real-Debrid _post JSON error', 'Status: %s, Text: %s' % (response.status_code, response.text[:200]))
+			return None
+		except: return None
 
 	def clear_cache(self, clear_hashes=True):
 		try:
