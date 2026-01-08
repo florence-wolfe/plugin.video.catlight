@@ -28,7 +28,7 @@ class TVShows:
 		self.category_name = self.params_get('category_name', None) or self.params_get('name', None) or 'TV Shows'
 		self.id_type, self.list, self.action = self.params_get('id_type', 'tmdb_id'), self.params_get('list', []), self.params_get('action', None)
 		self.items, self.new_page, self.total_pages, self.is_external = [], {}, None, kodi_utils.external()
-		self.is_anime()
+		self.determine_content_type()
 		if self.is_external:
 			self.widget_hide_next_page = settings.widget_hide_next_page()
 			self.widget_hide_watched = self.action not in ('watched_tvshows', 'recent_watched_tvshows') and settings.widget_hide_watched()
@@ -37,13 +37,14 @@ class TVShows:
 		self.paginate_start = int(self.params_get('paginate_start', '0'))
 		self.append = self.items.append
 
-	def is_anime(self):
-		if 'is_anime_list' in self.params: self.is_anime_list = self.params['is_anime_list'] == 'true'
+	def determine_content_type(self):
+		if 'content_type' in self.params: self.content_type = self.params['content_type']
+		elif 'is_anime_list' in self.params: self.content_type = 'anime' if self.params['is_anime_list'] == 'true' else 'tv'
 		elif self.action in self.personal:
-			if settings.include_anime_tvshow(): self.is_anime_list = None
-			else: self.is_anime_list = False
-		elif self.action == 'tmdb_tv_search': self.is_anime_list = None
-		else: self.is_anime_list = None
+			if settings.include_anime_tvshow(): self.content_type = 'all'
+			else: self.content_type = 'tv'
+		elif self.action == 'tmdb_tv_search': self.content_type = 'all'
+		else: self.content_type = 'all'
 
 	def fetch_list(self):
 		handle = int(sys.argv[1])
@@ -131,7 +132,7 @@ class TVShows:
 			kodi_utils.add_items(handle, self.worker())
 			if self.new_page and not self.widget_hide_next_page:
 				self.new_page.update({'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name})
-				if self.is_anime_list is not None: self.new_page['is_anime_list'] == {True: 'true', False: 'false'}[self.is_anime_list]
+				self.new_page.update({'mode': 'build_tvshow_list', 'action': self.action, 'category_name': self.category_name, 'content_type': self.content_type})
 				kodi_utils.add_dir(handle, self.new_page, 'Next Page (%s) >>' % self.new_page['new_page'], 'nextpage', kodi_utils.get_icon('nextpage_landscape'))
 		except: pass
 		kodi_utils.set_content(handle, 'tvshows')
@@ -143,7 +144,7 @@ class TVShows:
 
 	def build_tvshow_content(self, _position, _id):
 		try:
-			meta = tvshow_meta(self.id_type, _id, self.tmdb_api_key, self.mpaa_region, self.current_date, self.current_time, self.is_anime_list)
+			meta = tvshow_meta(self.id_type, _id, self.tmdb_api_key, self.mpaa_region, self.current_date, self.current_time, self.content_type)
 			if not meta or 'blank_entry' in meta: return
 			cm = []
 			cm_append = cm.append

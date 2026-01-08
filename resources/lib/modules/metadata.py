@@ -137,7 +137,7 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 	except: pass
 	return meta
 
-def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_time=None, is_anime_list=None):
+def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_time=None, content_type='all'):
 	if id_type == 'trakt_dict':
 		if media_id.get('tmdb', None): id_type, media_id = 'tmdb_id', media_id['tmdb']
 		elif media_id.get('imdb', None): id_type, media_id = 'imdb_id', media_id['imdb']
@@ -145,7 +145,7 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 		else: id_type, media_id = None, None
 	if media_id == None: return None
 	meta = meta_cache.get('tvshow', id_type, media_id, current_time)
-	if meta: return meta_valid_check(meta, is_anime_list)
+	if meta: return meta_valid_check(meta, content_type)
 	try:
 		if id_type == 'tmdb_id': data = tvshow_details(media_id, api_key)
 		else:
@@ -270,7 +270,7 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 				'landscape': landscape, 'keywords': keywords, 'rpdb_poster': rpdb_poster, 'short_cast': short_cast}
 		meta_cache.set('tvshow', id_type, meta, tvshow_expiry(current_date, meta), current_time)
 	except: pass
-	return meta_valid_check(meta, is_anime_list)
+	return meta_valid_check(meta, content_type)
 
 def movieset_meta(media_id, api_key, current_time=None):
 	if media_id == None: return None
@@ -417,9 +417,11 @@ def tvshow_expiry(current_date, meta):
 	except: expiration = 96
 	return expiration
 
-def meta_valid_check(meta, is_anime_list):
-	if is_anime_list == None: return meta
-	if is_anime_check(meta) != is_anime_list: meta = {}
+def meta_valid_check(meta, content_type):
+	if content_type == 'all': return meta
+	is_anime = is_anime_check(meta)
+	if content_type == 'anime' and not is_anime: return {}
+	if content_type == 'tv' and is_anime: return {}
 	return meta
 
 def is_anime_check(meta=None, tmdb_id=None):
