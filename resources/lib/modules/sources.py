@@ -38,10 +38,19 @@ class Sources():
 		'tb_browse': ('apis.torbox_api', 'TorBoxAPI')}
 
 	def playback_prep(self, params=None):
+		try:
+			from modules.kodi_utils import logger
+			if logger: logger('CatLight playback_prep', 'Starting playback preparation')
+		except: pass
 		kodi_utils.hide_busy_dialog()
 		if params: self.params = params
 		params_get = self.params.get
-		if not kodi_utils.external_playback_check(params): return
+		if not kodi_utils.external_playback_check(params): 
+			try:
+				from modules.kodi_utils import logger
+				if logger: logger('CatLight playback_prep', 'External playback check failed')
+			except: pass
+			return
 		self.play_type, self.background, self.prescrape = params_get('play_type', ''), params_get('background', 'false') == 'true', params_get('prescrape', self.prescrape) == 'true'
 		self.random, self.random_continual = params_get('random', 'false') == 'true', params_get('random_continual', 'false') == 'true'
 		if 'external_cache_check' in self.params: self.external_cache_check = params_get('external_cache_check') == 'true'
@@ -605,12 +614,22 @@ class Sources():
 		return CatLightPlayer().run(link, 'video')
 
 	def play_file(self, results, source={}):
+		try:
+			from modules.kodi_utils import logger
+			if logger: logger('CatLight play_file', 'Starting playback with %d results' % len(results))
+		except: pass
 		self.playback_successful, self.cancel_all_playback = None, False
 		retry_easynews = settings.easynews_playback_method('retry')
 		try:
 			kodi_utils.hide_busy_dialog()
 			url = None
 			results = [i for i in results if not 'Uncached' in i.get('cache_provider', '')]
+			if not results:
+				try:
+					from modules.kodi_utils import logger
+					if logger: logger('CatLight play_file', 'No valid results after filtering')
+				except: pass
+				return self._kill_progress_dialog()
 			if not source: source = results[0]
 			items = [source]
 			if not self.limit_resolve: 
@@ -800,6 +819,10 @@ class Sources():
 	def resolve_internal(self, scrape_provider, item_id, url_dl, direct_debrid_link=False):
 		url = None
 		try:
+			try:
+				from modules.kodi_utils import logger
+				if logger: logger('CatLight resolve_internal', 'Provider: %s, item_id: %s' % (scrape_provider, str(item_id)[:100] if item_id else 'None'))
+			except: pass
 			if direct_debrid_link or scrape_provider == 'folders': url = url_dl
 			elif scrape_provider == 'easynews':
 				from indexers.easynews import resolve_easynews
@@ -813,6 +836,11 @@ class Sources():
 						try:
 							from modules.kodi_utils import logger
 							if logger: logger('Real-Debrid resolve_internal', 'unrestrict_link returned None for item_id: %s' % str(item_id)[:100])
+						except: pass
+					else:
+						try:
+							from modules.kodi_utils import logger
+							if logger: logger('CatLight resolve_internal', 'Resolved URL: %s' % (str(url)[:100] if url else 'None'))
 						except: pass
 				else:
 					if '_cloud' in scrape_provider: item_id = debrid_function().get_item_details(item_id)['link']

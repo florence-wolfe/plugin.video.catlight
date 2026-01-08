@@ -10,7 +10,7 @@ from modules.source_utils import supported_video_extensions, seas_ep_filter, ext
 from modules.kodi_utils import sleep, ok_dialog, progress_dialog, notification
 try:
 	from modules.kodi_utils import logger
-except:
+except ImportError:
 	logger = None
 
 class RealDebridAPI:
