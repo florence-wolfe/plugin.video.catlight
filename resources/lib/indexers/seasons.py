@@ -58,7 +58,7 @@ def build_season_list(params):
 														'title': show_title, 'tmdb_id': tmdb_id, 'tvdb_id': tvdb_id, 'season': season_number}))])
 				set_properties({'watchedepisodes': str(watched), 'unwatchedepisodes': str(unwatched)})
 				set_properties({'totalepisodes': str(aired_eps), 'watchedprogress': str(visible_progress),
-								'flolight.extras_params': extras_params, 'flolight.options_params': options_params})
+								'catlight.extras_params': extras_params, 'catlight.options_params': options_params})
 				if is_external:
 					cm.extend([['refresh', ('[B]Refresh Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'refresh_widgets'}))],
 							['reload', ('[B]Reload Widgets[/B]', 'RunPlugin(%s)' % build_url({'mode': 'kodi_refresh'}))]])
@@ -88,7 +88,7 @@ def build_season_list(params):
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
 	use_name = settings.use_season_name()
-	watched_title = 'Trakt' if watched_indicators == 1 else 'FLOLAM'
+	watched_title = 'Trakt' if watched_indicators == 1 else 'CATLAM'
 	meta = tvshow_meta('tmdb_id', params['tmdb_id'], settings.tmdb_api_key(), settings.mpaa_region(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, show_title, show_year = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('title'), meta_get('year') or '2050'

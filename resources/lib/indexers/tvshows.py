@@ -53,7 +53,7 @@ class TVShows:
 			except: page_no = self.params_get('new_page')
 			if page_no == 1 and not self.is_external:
 				folder_path = kodi_utils.folder_path()
-				if not any([x in folder_path for x in ('build_season_list', 'build_episode_list')]): kodi_utils.set_property('flolight.exit_params', folder_path)
+				if not any([x in folder_path for x in ('build_season_list', 'build_episode_list')]): kodi_utils.set_property('catlight.exit_params', folder_path)
 			if self.action in self.personal: var_module, import_function = self.personal[self.action]
 			else: var_module, import_function = 'apis.%s_api' % self.action.split('_')[0], self.action
 			try: function = manual_function_import(var_module, import_function)
@@ -235,16 +235,16 @@ class TVShows:
 			cast = meta_get('short_cast', []) or meta_get('cast', []) or []
 			info_tag.setCast([self.kodi_actor(name=item['name'], role=item['role'], thumbnail=item['thumbnail']) for item in cast])
 			set_properties({
-				'flolight.extras_params': extras_params,
-				'flolight.options_params': options_params,
-				'flolight.browse_recommended_params': browse_recommended_params,
-				'flolight.browse_more_like_this_params': browse_more_like_this_params,
-				'flolight.browse_similar_params': browse_similar_params,
-				'flolight.browse_in_trakt_list_params': browse_in_trakt_list_params,
-				'flolight.trakt_manager_params': trakt_manager_params,
-				'flolight.personal_manager_params': personal_manager_params,
-				'flolight.tmdb_manager_params': tmdb_manager_params,
-				'flolight.favorites_manager_params': favorites_manager_params
+				'catlight.extras_params': extras_params,
+				'catlight.options_params': options_params,
+				'catlight.browse_recommended_params': browse_recommended_params,
+				'catlight.browse_more_like_this_params': browse_more_like_this_params,
+				'catlight.browse_similar_params': browse_similar_params,
+				'catlight.browse_in_trakt_list_params': browse_in_trakt_list_params,
+				'catlight.trakt_manager_params': trakt_manager_params,
+				'catlight.personal_manager_params': personal_manager_params,
+				'catlight.tmdb_manager_params': tmdb_manager_params,
+				'catlight.favorites_manager_params': favorites_manager_params
 				})
 			self.append(((url_params, listitem, self.is_folder), _position))
 		except: pass
@@ -260,7 +260,7 @@ class TVShows:
 		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()
 		self.is_folder = False if self.open_extras else True
 		self.watched_indicators = settings.watched_indicators()
-		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'FLOLAM'
+		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'CATLAM'
 		self.watched_info = watched_status.watched_info_tvshow(watched_status.get_database(self.watched_indicators))
 		self.window_command = 'ActivateWindow(Videos,%s,return)' if self.is_external else 'Container.Update(%s)'
 		if self.custom_order:

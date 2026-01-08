@@ -64,6 +64,6 @@ def favorites_manager():
 	if params: dialogs.favorites_manager_choice(params)
 
 def get_params(param_name):
-	try: params = dict(parse_qsl(get_infolabel('ListItem.Property(flolight.%s)' % param_name).split('plugin://plugin.video.flolight/?')[1], keep_blank_values=True))
+	try: params = dict(parse_qsl(get_infolabel('ListItem.Property(catlight.%s)' % param_name).split('plugin://plugin.video.catlight/?')[1], keep_blank_values=True))
 	except: params = None
 	return params

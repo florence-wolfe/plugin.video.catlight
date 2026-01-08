@@ -373,7 +373,7 @@ class SourcesPlayback(BaseDialog):
 	def update_resumer(self):
 		count = 0
 		while self.resume_choice is None:
-			percent = int((float(count)/10000)*100)
+			percent = int((catat(count)/10000)*100)
 			if percent >= 100: self.resume_choice = 'resume'
 			self.setProperty('percent', str(percent))
 			count += 100

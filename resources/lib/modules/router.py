@@ -5,7 +5,7 @@ from modules.kodi_utils import external, get_property
 # from modules.kodi_utils import logger
 
 def sys_exit_check():
-	if get_property('flolight.reuse_language_invoker') == 'false': return False
+	if get_property('catlight.reuse_language_invoker') == 'false': return False
 	return external()
 
 def routing(sys):
@@ -32,8 +32,8 @@ def routing(sys):
 			from modules.sources import Sources
 			Sources().playback_prep(params)
 		elif mode == 'playback.video':
-			from modules.player import FloLightPlayer
-			FloLightPlayer().run(_get('url', None), _get('obj', None))
+			from modules.player import CatLightPlayer
+			CatLightPlayer().run(_get('url', None), _get('obj', None))
 	elif 'choice' in mode:
 		from indexers import dialogs
 		exec('dialogs.%s(params)' % mode)

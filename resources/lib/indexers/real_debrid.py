@@ -47,7 +47,7 @@ def rd_downloads():
 				cm = []
 				cm_append = cm.append
 				datetime_object = jsondate_to_datetime(item['generated'], '%Y-%m-%dT%H:%M:%S.%fZ', remove_time=True)
-				filename, size = item['filename'], float(int(item['filesize']))/1073741824
+				filename, size = item['filename'], catat(int(item['filesize']))/1073741824
 				name = clean_file_name(filename).upper()
 				display = '%02d | %.2f GB | %s  | [I]%s [/I]' % (count, size, datetime_object, name)
 				url_link = item['download']
@@ -81,7 +81,7 @@ def browse_rd_cloud(folder_id):
 		for count, item in enumerate(pack_info, 1):
 			try:
 				cm = []
-				name, url_link, size = item['path'], item['url_link'], float(int(item['bytes']))/1073741824
+				name, url_link, size = item['path'], item['url_link'], catat(int(item['bytes']))/1073741824
 				if name.startswith('/'): name = name.split('/')[-1]
 				name = clean_file_name(name).upper()
 				if url_link.startswith('/'): url_link = 'http' + url_link
@@ -122,8 +122,8 @@ def resolve_rd(params):
 	url = params['url']
 	resolved_link = RealDebrid.unrestrict_link(url)
 	if params.get('play', 'false') != 'true' : return resolved_link
-	from modules.player import FloLightPlayer
-	FloLightPlayer().run(resolved_link, 'video')
+	from modules.player import CatLightPlayer
+	CatLightPlayer().run(resolved_link, 'video')
 
 def rd_account_info():
 	try:

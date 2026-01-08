@@ -2,7 +2,7 @@
 <settings>
 	<!-- General -->
 	<category label="General">
-		<setting label="Flo Light uses its own settings window." type="text" enable="false" />
-		<setting label="Open Flo Light Settings..." type="action" option="close" action="RunPlugin(plugin://plugin.video.flolight/?mode=open_settings)" />
+		<setting label="Cat Light uses its own settings window." type="text" enable="false" />
+		<setting label="Open Cat Light Settings..." type="action" option="close" action="RunPlugin(plugin://plugin.video.catlight/?mode=open_settings)" />
 	</category>
 </settings>

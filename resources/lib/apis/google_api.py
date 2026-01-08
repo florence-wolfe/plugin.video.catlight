@@ -110,4 +110,4 @@ def model_present(model_id):
 	return model_id in models()
 
 def get_api():
-	return get_setting('flolight.google_api')
+	return get_setting('catlight.google_api')

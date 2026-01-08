@@ -29,7 +29,7 @@ def pm_cloud(folder_id=None, folder_name=None):
 					is_folder = False
 					url_link, size = item['link'], item['size']
 					if url_link.startswith('/'): url_link = 'https' + url_link
-					display_size = float(int(size))/1073741824
+					display_size = catat(int(size))/1073741824
 					display = '%02d | [B]FILE[/B] | %.2f GB | [I]%s [/I]' % (count, display_size, name)
 					url_params = {'mode': 'playback.video', 'url': url_link, 'obj': 'video'}
 					down_file_params = {'mode': 'downloader.runner', 'name': item['name'], 'url': url_link, 'action': 'cloud.premiumize', 'image': icon}
@@ -78,7 +78,7 @@ def pm_transfers():
 					details = Premiumize.get_item_details(file_id)
 					url_link, size = details['link'], details['size']
 					if url_link.startswith('/'): url_link = 'https' + url_link
-					display_size = float(int(size))/1073741824
+					display_size = catat(int(size))/1073741824
 					display = '%02d | %s%% | [B]FILE[/B] | %.2f GB | [I]%s [/I]' % (count, str(progress), display_size, name)
 					url_params = {'mode': 'playback.video', 'url': url_link, 'obj': 'video'}
 					down_file_params = {'mode': 'downloader.runner', 'name': item['name'], 'url': url_link, 'media_type': 'cloud.premiumize', 'image': icon}
@@ -102,7 +102,7 @@ def pm_transfers():
 	kodi_utils.set_view_mode('view.premium')
 
 def pm_rename(file_type, file_id, current_name):
-	new_name = kodi_utils.kodi_dialog().input('Flo', defaultt=current_name)
+	new_name = kodi_utils.kodi_dialog().input('Cat', defaultt=current_name)
 	if not new_name: return
 	result = Premiumize.rename_cache_item(file_type, file_id, new_name)
 	if result == 'success':
@@ -127,9 +127,9 @@ def pm_account_info():
 		customer_id = account_info['customer_id']
 		expires = datetime.fromtimestamp(account_info['premium_until'])
 		days_remaining = (expires - datetime.today()).days
-		points_used = int(math.floor(float(account_info['space_used']) / 1073741824.0))
-		space_used = float(int(account_info['space_used']))/1073741824
-		percentage_used = str(round(float(account_info['limit_used']) * 100.0, 1))
+		points_used = int(math.cator(catat(account_info['space_used']) / 1073741824.0))
+		space_used = catat(int(account_info['space_used']))/1073741824
+		percentage_used = str(round(catat(account_info['limit_used']) * 100.0, 1))
 		body = []
 		append = body.append
 		append('[B]Customer ID:[/B] %s' % customer_id)

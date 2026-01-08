@@ -83,9 +83,9 @@ def build_episode_list(params):
 								'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
 				set_properties({
 					'episode_type': episode_type,
-					'flolight.extras_params': extras_params,
-					'flolight.options_params': options_params,
-					'flolight.playback_options_params': playback_options_params
+					'catlight.extras_params': extras_params,
+					'catlight.options_params': options_params,
+					'catlight.playback_options_params': playback_options_params
 					})
 				yield (url_params, listitem, False)
 			except: pass
@@ -100,7 +100,7 @@ def build_episode_list(params):
 	perform_cm_sort = cm_sort_order != settings.cm_default_order()
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
 	playback_key = settings.playback_key()
-	watched_title = 'Trakt' if watched_indicators == 1 else 'FLOLAM'
+	watched_title = 'Trakt' if watched_indicators == 1 else 'CATLAM'
 	meta = tvshow_meta('tmdb_id', params.get('tmdb_id'), settings.tmdb_api_key(), settings.mpaa_region(), current_date)
 	meta_get = meta.get
 	tmdb_id, tvdb_id, imdb_id, tvshow_plot, orig_title = meta_get('tmdb_id'), meta_get('tvdb_id'), meta_get('imdb_id'), meta_get('plot'), meta_get('original_title')
@@ -145,7 +145,7 @@ def build_single_episode(list_type, params={}):
 		try:
 			cat_name = {'episode.progress': 'In Progress Episodes',
 						'episode.recently_watched': 'Recently Watched Episodes',
-						'episode.next_trakt': 'Next Episodes', 'episode.next_flolight': 'Next Episodes',
+						'episode.next_trakt': 'Next Episodes', 'episode.next_catlight': 'Next Episodes',
 						'episode.trakt': {'true': 'Recently Aired Episodes', None: 'Trakt Calendar'}}[list_type]
 			if isinstance(cat_name, dict): cat_name = cat_name[params.get('recently_aired')]
 		except: cat_name = 'Episodes'
@@ -289,9 +289,9 @@ def build_single_episode(list_type, params={}):
 							'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
 			set_properties({
 				'episode_type': episode_type,
-				'flolight.extras_params': extras_params,
-				'flolight.options_params': options_params,
-				'flolight.playback_options_params': playback_options_params
+				'catlight.extras_params': extras_params,
+				'catlight.options_params': options_params,
+				'catlight.playback_options_params': playback_options_params
 				})
 			item_list_append({'list_items': (url_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
 							'unaired': unaired, 'last_played': ep_data_get('last_played', resinsert), 'sort_order': _position, 'unwatched': ep_data_get('unwatched')})
@@ -316,7 +316,7 @@ def build_single_episode(list_type, params={}):
 	rpdb_api_key = settings.rpdb_api_key('tvshow')
 	playback_key = settings.playback_key()
 	watched_db = ws.get_database(watched_indicators)
-	watched_title = 'Trakt' if watched_indicators == 1 else 'FLOLAM'
+	watched_title = 'Trakt' if watched_indicators == 1 else 'CATLAM'
 	if list_type == 'episode.next':
 		include_unwatched, include_unaired, nextep_content = settings.nextep_include_unwatched(), settings.nextep_include_unaired(), settings.nextep_method()
 		sort_key, sort_direction = settings.nextep_sort_key(), settings.nextep_sort_direction()
@@ -326,7 +326,7 @@ def build_single_episode(list_type, params={}):
 		hidden_list = ws.get_hidden_progress_items(watched_indicators)
 		if hidden_list: data = [i for i in data if not i['media_ids']['tmdb'] in hidden_list]
 		if watched_indicators == 1: resformat, resinsert, list_type = '%Y-%m-%dT%H:%M:%S.%fZ', '2000-01-01T00:00:00.000Z', 'episode.next_trakt'
-		else: resformat, resinsert, list_type = '%Y-%m-%d %H:%M:%S', '2000-01-01 00:00:00', 'episode.next_flolight'
+		else: resformat, resinsert, list_type = '%Y-%m-%d %H:%M:%S', '2000-01-01 00:00:00', 'episode.next_catlight'
 		if include_unwatched != 0:
 			if include_unwatched in (1, 3):
 				from apis.trakt_api import trakt_watchlist

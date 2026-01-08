@@ -124,7 +124,7 @@ class Extras(BaseDialog):
 			rating, icon = data[prop]['rating'], data[prop]['icon']
 			if rating in ('', '%'): continue
 			if prop == 'tmdb' and not active_extra_ratings: continue
-			self.setProperty('%s_rating' % prop, 'true'), self.set_label(win_prop + _id, rating), self.set_image(win_prop + 100 + _id, 'flolight_flags/ratings/%s' % icon)
+			self.setProperty('%s_rating' % prop, 'true'), self.set_label(win_prop + _id, rating), self.set_image(win_prop + 100 + _id, 'catlight_flags/ratings/%s' % icon)
 			active_extra_ratings = True
 		if win_prop == 4000 and self.getProperty('tmdb_rating') == 'true': self.set_infoline1(remove_rating=True)
 
@@ -654,7 +654,7 @@ class Extras(BaseDialog):
 		dialogs.playback_choice(params)
 
 	def assign_buttons(self):
-		setting_id_base = 'flolight.extras.%s.button' % self.media_type
+		setting_id_base = 'catlight.extras.%s.button' % self.media_type
 		butts = Extras.button_ids[:-1]
 		for item in butts:
 			setting_id = setting_id_base + str(item)
@@ -662,7 +662,7 @@ class Extras(BaseDialog):
 				button_action = self.get_setting(setting_id)
 				button_label = self.button_label_values[self.media_type][button_action]
 			except:
-				self.restore_setting_default({'setting_id': setting_id.replace('flolight.', ''), 'silent': 'true'})
+				self.restore_setting_default({'setting_id': setting_id.replace('catlight.', ''), 'silent': 'true'})
 				button_action = self.get_setting(setting_id)
 				button_label = self.button_label_values[self.media_type][button_action]
 			self.setProperty('button%s.label' % item, button_label)
@@ -710,7 +710,7 @@ class Extras(BaseDialog):
 		self.landscape = self.meta_get('landscape') or ''
 		self.rating = str(round(self.meta_get('rating'), 1)) if self.meta_get('rating') not in (0, 0.0, None) else None
 		self.mpaa, self.genre, self.network = self.meta_get('mpaa'), self.meta_get('genre'), self.meta_get('studio') or ''
-		self.status, self.duration_data = self.extra_info_get('status', '').replace(' Series', ''), int(float(self.meta_get('duration'))/60)
+		self.status, self.duration_data = self.extra_info_get('status', '').replace(' Series', ''), int(catat(self.meta_get('duration'))/60)
 		self.status_infoline_value = self.make_status_infoline()
 		self.stinger_dialog = self.make_stinger_dialog()
 		self.make_plot_and_tagline()
@@ -764,7 +764,7 @@ class Extras(BaseDialog):
 		return True
 
 	def close_all(self):
-		kodi_utils.clear_property('flolight.window_stack')
+		kodi_utils.clear_property('catlight.window_stack')
 		kodi_utils.close_all_dialog()
 
 class ShowTextMedia(BaseDialog):

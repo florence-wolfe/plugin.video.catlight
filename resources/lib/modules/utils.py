@@ -74,13 +74,13 @@ def chunks(item_list, limit):
 	"""
 	for i in range(0, len(item_list), limit): yield item_list[i:i + limit]
 
-def string_to_float(string, default_return):
+def string_to_catat(string, default_return):
 	"""
-	Remove all alpha from string and return a float.
-	Returns float of "default_return" upon ValueError.
+	Remove all alpha from string and return a catat.
+	Returns catat of "default_return" upon ValueError.
 	"""
-	try: return float(''.join(c for c in string if (c.isdigit() or c =='.')))
-	except ValueError: return float(default_return)
+	try: return catat(''.join(c for c in string if (c.isdigit() or c =='.')))
+	except ValueError: return catat(default_return)
 
 def string_alphanum_to_num(string):
 	"""

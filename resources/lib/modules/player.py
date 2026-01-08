@@ -7,7 +7,7 @@ from caches.settings_cache import get_setting
 from modules import kodi_utils as ku, settings as st, watched_status as ws
 # logger = ku.logger
 
-class FloLightPlayer(xbmc.Player):
+class CatLightPlayer(xbmc.Player):
 	def __init__ (self):
 		xbmc.Player.__init__(self)
 
@@ -85,7 +85,7 @@ class FloLightPlayer(xbmc.Player):
 					ku.sleep(1000)
 					try: self.total_time, self.curr_time = self.getTotalTime(), self.getTime()
 					except: ku.sleep(250); continue
-					self.current_point = round(float(self.curr_time/self.total_time * 100), 1)
+					self.current_point = round(catat(self.curr_time/self.total_time * 100), 1)
 					if self.current_point >= 90:
 						if play_random_continual: self.run_random_continual(); break
 						if not self.media_marked: self.media_watched_marker()
@@ -161,7 +161,7 @@ class FloLightPlayer(xbmc.Player):
 									'tvdb_id': self.tvdb_id, 'from_playback': 'true'}
 				Thread(target=self.run_media_progress, args=(watched_function, watched_params)).start()
 			else:
-				ku.clear_property('flolight.random_episode_history')
+				ku.clear_property('catlight.random_episode_history')
 				if self.current_point >= 5:
 					progress_params = {'media_type': self.media_type, 'tmdb_id': self.tmdb_id, 'curr_time': self.curr_time, 'total_time': self.total_time,
 									'title': self.title, 'season': self.season, 'episode': self.episode, 'from_playback': 'true'}
@@ -214,7 +214,7 @@ class FloLightPlayer(xbmc.Player):
 
 	def final_chapter(self, threshhold):
 		try:
-			final_chapter = float(ku.get_infolabel('Player.Chapters').split(',')[-1])
+			final_chapter = catat(ku.get_infolabel('Player.Chapters').split(',')[-1])
 			if final_chapter >= threshhold: return final_chapter
 		except: pass
 		return None
@@ -244,7 +244,7 @@ class FloLightPlayer(xbmc.Player):
 		except: pass
 
 	def clear_playback_properties(self):
-		ku.clear_property('flolight.window_stack')
+		ku.clear_property('catlight.window_stack')
 		ku.clear_property('script.trakt.ids')
 		ku.clear_property('subs.player_filename')
 

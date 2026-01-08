@@ -11,7 +11,7 @@ session = make_session('https://offcloud.com/api/')
 
 class OffcloudAPI:
 	def __init__(self):
-		self.token = get_setting('flolight.oc.token', 'empty_setting')
+		self.token = get_setting('catlight.oc.token', 'empty_setting')
 		self.base_url = 'https://offcloud.com/api/'
 
 	def ok_message(self, message='An Error Occurred'):

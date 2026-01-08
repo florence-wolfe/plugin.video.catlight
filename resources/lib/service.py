@@ -8,51 +8,51 @@ from threading import Thread
 from caches.settings_cache import get_setting, set_setting, sync_settings
 from modules import kodi_utils
 
-pause_services_prop = 'flolight.pause_services'
-firstrun_update_prop = 'flolight.firstrun_update'
-current_skin_prop = 'flolight.current_skin'
+pause_services_prop = 'catlight.pause_services'
+firstrun_update_prop = 'catlight.firstrun_update'
+current_skin_prop = 'catlight.current_skin'
 trakt_service_string = 'TraktMonitor Service Update %s - %s'
 trakt_success_line_dict = {'success': 'Trakt Update Performed', 'no account': '(Unauthorized) Trakt Update Performed'}
 update_string = 'Next Update in %s minutes...'
 
 class SetAddonConstants:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'SetAddonConstants Service Starting')
+		kodi_utils.logger('Cat Light', 'SetAddonConstants Service Starting')
 		import random
-		addon_items = [('flolight.addon_version', kodi_utils.addon_info('version')),
-						('flolight.addon_path', kodi_utils.addon_info('path')),
-						('flolight.addon_profile', kodi_utils.translate_path(kodi_utils.addon_info('profile'))),
-						('flolight.addon_icon', kodi_utils.translate_path(kodi_utils.addon_info('icon'))),
-						('flolight.addon_icon_mini', os.path.join(kodi_utils.addon_info('path'), 'resources', 'media', 'addon_icons', 'minis',
+		addon_items = [('catlight.addon_version', kodi_utils.addon_info('version')),
+						('catlight.addon_path', kodi_utils.addon_info('path')),
+						('catlight.addon_profile', kodi_utils.translate_path(kodi_utils.addon_info('profile'))),
+						('catlight.addon_icon', kodi_utils.translate_path(kodi_utils.addon_info('icon'))),
+						('catlight.addon_icon_mini', os.path.join(kodi_utils.addon_info('path'), 'resources', 'media', 'addon_icons', 'minis',
 						os.path.basename(kodi_utils.translate_path(kodi_utils.addon_info('icon'))))),
-						('flolight.addon_fanart', kodi_utils.translate_path(kodi_utils.addon_info('fanart'))),
-						('flolight.playback_key', str(random.randint(1000, 10000)))]
+						('catlight.addon_fanart', kodi_utils.translate_path(kodi_utils.addon_info('fanart'))),
+						('catlight.playback_key', str(random.randint(1000, 10000)))]
 		for item in addon_items: kodi_utils.set_property(*item)
-		return kodi_utils.logger('Flo Light', 'SetAddonConstants Service Finished')
+		return kodi_utils.logger('Cat Light', 'SetAddonConstants Service Finished')
 
 class DatabaseMaintenance:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'DatabaseMaintenance Service Starting')
+		kodi_utils.logger('Cat Light', 'DatabaseMaintenance Service Starting')
 		from caches.base_cache import make_databases
 		make_databases()
-		return kodi_utils.logger('Flo Light', 'DatabaseMaintenance Service Finished')
+		return kodi_utils.logger('Cat Light', 'DatabaseMaintenance Service Finished')
 
 class SyncSettings:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'SyncSettings Service Starting')
+		kodi_utils.logger('Cat Light', 'SyncSettings Service Starting')
 		sync_settings()
-		return kodi_utils.logger('Flo Light', 'SyncSettings Service Finished')
+		return kodi_utils.logger('Cat Light', 'SyncSettings Service Finished')
 
 class OnUpdateChanges:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'OnUpdateChanges Service Starting')
+		kodi_utils.logger('Cat Light', 'OnUpdateChanges Service Starting')
 		try:
 			for method in list(filter(lambda x: x[0] != 'run', inspect.getmembers(OnUpdateChanges, predicate=inspect.isfunction))):
-				if not get_setting('flolight.updatechecks.%s' % method[0], 'false') == 'true':
+				if not get_setting('catlight.updatechecks.%s' % method[0], 'false') == 'true':
 					method[1](self)
 					set_setting('updatechecks.%s' % method[0], 'true')
 		except: pass
-		return kodi_utils.logger('Flo Light', 'OnUpdateChanges Service Finished')
+		return kodi_utils.logger('Cat Light', 'OnUpdateChanges Service Finished')
 
 	def context_menu_update_03(self):
 		from caches.settings_cache import default_setting_values
@@ -61,7 +61,7 @@ class OnUpdateChanges:
 
 class CustomFonts:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'CustomFonts Service Starting')
+		kodi_utils.logger('Cat Light', 'CustomFonts Service Starting')
 		from windows.base_window import FontUtils
 		monitor, player = kodi_utils.kodi_monitor(), kodi_utils.kodi_player()
 		wait_for_abort, is_playing = monitor.waitForAbort, player.isPlayingVideo
@@ -74,11 +74,11 @@ class CustomFonts:
 		except: pass
 		try: del player
 		except: pass
-		return kodi_utils.logger('Flo Light', 'CustomFonts Service Finished')
+		return kodi_utils.logger('Cat Light', 'CustomFonts Service Finished')
 
 class TraktMonitor:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'TraktMonitor Service Starting')
+		kodi_utils.logger('Cat Light', 'TraktMonitor Service Starting')
 		from apis.trakt_api import trakt_sync_activities
 		from modules.settings import trakt_sync_interval
 		monitor, player = kodi_utils.kodi_monitor(), kodi_utils.kodi_player()
@@ -90,23 +90,23 @@ class TraktMonitor:
 				sync_interval, wait_time = trakt_sync_interval()
 				next_update_string = update_string % sync_interval
 				status = trakt_sync_activities()
-				if status == 'failed': kodi_utils.logger('Flo Light', trakt_service_string % ('Failed. Error from Trakt', next_update_string))
+				if status == 'failed': kodi_utils.logger('Cat Light', trakt_service_string % ('Failed. Error from Trakt', next_update_string))
 				else:
-					if status in ('success', 'no account'): kodi_utils.logger('Flo Light', trakt_service_string % ('Success. %s' % trakt_success_line_dict[status], next_update_string))
-					else: kodi_utils.logger('Flo Light', trakt_service_string % ('Success. No Changes Needed', next_update_string))# 'not needed'
-					if status == 'success' and get_setting('flolight.trakt.refresh_widgets', 'false') == 'true': kodi_utils.run_plugin({'mode': 'kodi_refresh'})
-			except Exception as e: kodi_utils.logger('Flo Light', trakt_service_string % ('Failed', 'The following Error Occured: %s' % str(e)))
+					if status in ('success', 'no account'): kodi_utils.logger('Cat Light', trakt_service_string % ('Success. %s' % trakt_success_line_dict[status], next_update_string))
+					else: kodi_utils.logger('Cat Light', trakt_service_string % ('Success. No Changes Needed', next_update_string))# 'not needed'
+					if status == 'success' and get_setting('catlight.trakt.refresh_widgets', 'false') == 'true': kodi_utils.run_plugin({'mode': 'kodi_refresh'})
+			except Exception as e: kodi_utils.logger('Cat Light', trakt_service_string % ('Failed', 'The following Error Occured: %s' % str(e)))
 			wait_for_abort(wait_time)
 		try: del monitor
 		except: pass
 		try: del player
 		except: pass
-		return kodi_utils.logger('Flo Light', 'TraktMonitor Service Finished')
+		return kodi_utils.logger('Cat Light', 'TraktMonitor Service Finished')
 
 class UpdateCheck:
 	def run(self):
 		if kodi_utils.get_property(firstrun_update_prop) == 'true': return
-		kodi_utils.logger('Flo Light', 'UpdateCheck Service Starting')
+		kodi_utils.logger('Cat Light', 'UpdateCheck Service Starting')
 		from modules.updater import update_check
 		from modules.settings import update_action, update_delay
 		end_pause = time() + update_delay()
@@ -122,11 +122,11 @@ class UpdateCheck:
 		except: pass
 		try: del player
 		except: pass
-		return kodi_utils.logger('Flo Light', 'UpdateCheck Service Finished')
+		return kodi_utils.logger('Cat Light', 'UpdateCheck Service Finished')
 
 class WidgetRefresher:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'WidgetRefresher Service Starting')
+		kodi_utils.logger('Cat Light', 'WidgetRefresher Service Starting')
 		from time import time
 		from indexers.random_lists import refresh_widgets
 		monitor, player = kodi_utils.kodi_monitor(), kodi_utils.kodi_player()
@@ -136,13 +136,13 @@ class WidgetRefresher:
 		while not monitor.abortRequested():
 			try:
 				wait_for_abort(10)
-				offset = int(get_setting('flolight.widget_refresh_timer', '60'))
+				offset = int(get_setting('catlight.widget_refresh_timer', '60'))
 				if offset != self.offset:
 					self.set_next_refresh(time())
 					continue
 				if self.condition_check(): continue
 				if self.next_refresh < time():
-					kodi_utils.logger('Flo Light', 'WidgetRefresher Service - Widgets Refreshed')
+					kodi_utils.logger('Cat Light', 'WidgetRefresher Service - Widgets Refreshed')
 					refresh_widgets()
 					self.set_next_refresh(time())
 			except: pass
@@ -150,21 +150,21 @@ class WidgetRefresher:
 		except: pass
 		try: del player
 		except: pass
-		return kodi_utils.logger('Flo Light', 'WidgetRefresher Service Finished')
+		return kodi_utils.logger('Cat Light', 'WidgetRefresher Service Finished')
 
 	def condition_check(self):
 		if not self.external(): return True
 
 		if self.next_refresh == None or self.is_playing() or kodi_utils.get_property(pause_services_prop) == 'true': return True
-		if kodi_utils.get_property('flolight.window_loaded') == 'true': return True 
+		if kodi_utils.get_property('catlight.window_loaded') == 'true': return True 
 		try:
-			window_stack = json.loads(kodi_utils.get_property('flolight.window_stack'))
+			window_stack = json.loads(kodi_utils.get_property('catlight.window_stack'))
 			if window_stack or window_stack == []: return True
 		except: pass
 		return False
 
 	def set_next_refresh(self, _time):
-		self.offset = int(get_setting('flolight.widget_refresh_timer', '60'))
+		self.offset = int(get_setting('catlight.widget_refresh_timer', '60'))
 		if self.offset: self.next_refresh = _time + (self.offset*60)
 		else: self.next_refresh = None
 
@@ -173,25 +173,25 @@ class WidgetRefresher:
 
 class AutoStart:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'AutoStart Service Starting')
-		from modules.settings import auto_start_flolight
-		if auto_start_flolight(): kodi_utils.run_addon()
-		return kodi_utils.logger('Flo Light', 'AutoStart Service Finished')
+		kodi_utils.logger('Cat Light', 'AutoStart Service Starting')
+		from modules.settings import auto_start_catlight
+		if auto_start_catlight(): kodi_utils.run_addon()
+		return kodi_utils.logger('Cat Light', 'AutoStart Service Finished')
 
 class AddonXMLCheck:
 	def run(self):
-		kodi_utils.logger('Flo Light', 'AddonXMLCheck Service Starting')
+		kodi_utils.logger('Cat Light', 'AddonXMLCheck Service Starting')
 		from xml.dom.minidom import parse as mdParse
-		self.addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.flolight/addon.xml')
+		self.addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.catlight/addon.xml')
 		self.root = mdParse(self.addon_xml)
 		self.change_file = False
 		self.check_property('reuse_language_invoker', 'reuselanguageinvoker')
 		self.check_property('addon_icon_choice', 'icon')
 		self.change_xml_file()
-		return kodi_utils.logger('Flo Light', 'AddonXMLCheck Service Finished')
+		return kodi_utils.logger('Cat Light', 'AddonXMLCheck Service Finished')
 
 	def check_property(self, setting, tag_name):
-		current_addon_setting = get_setting('flolight.%s' % setting, None)
+		current_addon_setting = get_setting('catlight.%s' % setting, None)
 		if current_addon_setting is None: return
 		tag_instance = self.root.getElementsByTagName(tag_name)[0].firstChild
 		current_property = tag_instance.data
@@ -204,13 +204,13 @@ class AddonXMLCheck:
 		kodi_utils.notification('Refreshing Addon XML After Update. Restarting Addons')
 		new_xml = str(self.root.toxml()).replace('<?xml version="1.0" ?>', '')
 		with open(self.addon_xml, 'w') as f: f.write(new_xml)
-		kodi_utils.logger('Flo Light', 'AddonXMLCheck Service - Change Detected. Restarting Addons')
+		kodi_utils.logger('Cat Light', 'AddonXMLCheck Service - Change Detected. Restarting Addons')
 		kodi_utils.execute_builtin('ActivateWindow(Home)', True)
 		kodi_utils.update_local_addons()
 		kodi_utils.disable_enable_addon()
 
 
-class FloLightMonitor(Monitor):
+class CatLightMonitor(Monitor):
 	def __init__ (self):
 		Monitor.__init__(self)
 		self.startServices()
@@ -230,11 +230,11 @@ class FloLightMonitor(Monitor):
 	def onNotification(self, sender, method, data):
 		if method in ('GUI.OnScreensaverActivated', 'System.OnSleep'):
 			kodi_utils.set_property(pause_services_prop, 'true')
-			kodi_utils.logger('OnNotificationActions', 'PAUSING Flo Light Services Due to Device Sleep')
+			kodi_utils.logger('OnNotificationActions', 'PAUSING Cat Light Services Due to Device Sleep')
 		elif method in ('GUI.OnScreensaverDeactivated', 'System.OnWake'):
 			kodi_utils.clear_property(pause_services_prop)
-			kodi_utils.logger('OnNotificationActions', 'UNPAUSING Flo Light Services Due to Device Awake')
+			kodi_utils.logger('OnNotificationActions', 'UNPAUSING Cat Light Services Due to Device Awake')
 
-kodi_utils.logger('Flo Light', 'Main Monitor Service Starting')
-FloLightMonitor().waitForAbort()
-kodi_utils.logger('Flo Light', 'Main Monitor Service Finished')
+kodi_utils.logger('Cat Light', 'Main Monitor Service Starting')
+CatLightMonitor().waitForAbort()
+kodi_utils.logger('Cat Light', 'Main Monitor Service Finished')

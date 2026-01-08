@@ -123,7 +123,7 @@ class Discover(BaseDialog):
 		if choice != None: self.set_key_values(self.chosen_item['url_insert'] % str(choice['id']), str(choice['name']))
 
 	def ratings(self):
-		ratings = [{'name': str(float(i)), 'id': str(i)} for i in range(1,11)]
+		ratings = [{'name': str(catat(i)), 'id': str(i)} for i in range(1,11)]
 		choice = self.selection_dialog(self.chosen_item['label'], [{'name': i['name']} for i in ratings], ratings)
 		if choice != None: self.set_key_values(self.chosen_item['url_insert'] % choice['id'], choice['name'])
 

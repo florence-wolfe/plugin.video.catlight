@@ -41,7 +41,7 @@ def browse_tb_cloud(folder_id, media_type):
 			try:
 				cm = []
 				name = clean_file_name(item['short_name']).upper()
-				size = float(int(item['size']))/1073741824
+				size = catat(int(item['size']))/1073741824
 				display = '%02d | [B]FILE[/B] | %.2f GB | [I]%s [/I]' % (count, size, name)
 				url_link = '%d,%d' % (int(folder_id), item['id'])
 				url_params = {'mode': 'torbox.resolve_tb', 'play': 'true', 'url': url_link, 'media_type': item['media_type']}
@@ -79,8 +79,8 @@ def resolve_tb(params):
 	if media_type == 'torrent': resolved_link = TorBox.unrestrict_link(file_id)
 	else: resolved_link = TorBox.unrestrict_usenet(file_id)
 	if params.get('play', 'false') != 'true': return resolved_link
-	from modules.player import FloLightPlayer
-	FloLightPlayer().run(resolved_link, 'video')
+	from modules.player import CatLightPlayer
+	CatLightPlayer().run(resolved_link, 'video')
 
 def tb_account_info():
 	try:

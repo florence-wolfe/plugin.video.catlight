@@ -8,7 +8,7 @@ class SettingsCache:
 	def get(self, setting_id):
 		try:
 			dbcon = connect_database('settings_db')
-			setting_id = setting_id.replace('flolight.', '')
+			setting_id = setting_id.replace('catlight.', '')
 			setting_value = dbcon.execute('SELECT setting_value from settings WHERE setting_id = ?', (setting_id,)).fetchone()[0]
 			self.set_memory_cache(setting_id, setting_value)
 		except: setting_value = None
@@ -52,10 +52,10 @@ class SettingsCache:
 		for item in settings_list: self.set_memory_cache(item[0], item[3] or item[2])
 
 	def set_memory_cache(self, setting_id, setting_value):
-		kodi_utils.set_property('flolight.%s' % setting_id, setting_value)
+		kodi_utils.set_property('catlight.%s' % setting_id, setting_value)
 
 	def delete_memory_cache(self, setting_id):
-		clear_property('flolight.%s' % setting_id)
+		clear_property('catlight.%s' % setting_id)
 
 	def setting_info(self, setting_id):
 		d_settings = default_settings()
@@ -120,10 +120,10 @@ def set_default(setting_ids):
 def set_boolean(params):
 	boolean_dict = {'true': 'false', 'false': 'true'}
 	setting = params['setting_id']
-	set_setting(setting, boolean_dict[get_setting('flolight.%s' % setting)])
+	set_setting(setting, boolean_dict[get_setting('catlight.%s' % setting)])
 
 def set_string(params):
-	current_value = get_setting('flolight.%s' % params['setting_id'])
+	current_value = get_setting('catlight.%s' % params['setting_id'])
 	current_value = current_value.replace('empty_setting', '')
 	new_value = kodi_utils.kodi_dialog().input('', defaultt=current_value)
 	if not new_value and not kodi_utils.confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11):
@@ -144,7 +144,7 @@ def set_numeric(params):
 	else: multiplier = None
 	new_value = kodi_utils.kodi_dialog().input('Range [B]%s - %s[/B].' % (min_value, max_value), type=1)
 	if not new_value: return
-	if multiplier: new_value = str(int(float(new_value) * multiplier[1]))
+	if multiplier: new_value = str(int(catat(new_value) * multiplier[1]))
 	if int(new_value) < min_value or int(new_value) > max_value:
 		kodi_utils.ok_dialog(text='Please Choose Between the Range [B]%s - %s[/B].' % (min_value, max_value))
 		return set_numeric(params)
@@ -153,7 +153,7 @@ def set_numeric(params):
 def set_path(params):
 	setting_id = params['setting_id']
 	browse_mode = int(default_setting_values(setting_id)['browse_mode'])
-	new_value = kodi_utils.kodi_dialog().browse(browse_mode, '', '', defaultt=get_setting('flolight.%s' % setting_id))
+	new_value = kodi_utils.kodi_dialog().browse(browse_mode, '', '', defaultt=get_setting('catlight.%s' % setting_id))
 	set_setting(setting_id, new_value)
 
 def set_from_list(params):
@@ -167,7 +167,7 @@ def set_from_list(params):
 
 def set_source_folder_path(params):
 	setting_id = params['setting_id']
-	current_setting = get_setting('flolight.%s' % setting_id)
+	current_setting = get_setting('catlight.%s' % setting_id)
 	if current_setting not in (None, 'None', ''):
 		if kodi_utils.confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11):
 			return set_setting(setting_id, 'None')
@@ -184,7 +184,7 @@ def restore_setting_default(params):
 		if not silent: kodi_utils.ok_dialog(text='Error restoring default setting')
 
 def default_setting_values(setting_id):
-	if 'flolight.' in setting_id: setting_id = setting_id.replace('flolight.', '')
+	if 'catlight.' in setting_id: setting_id = setting_id.replace('catlight.', '')
 	d_settings = default_settings()
 	return next((i for i in d_settings if i['setting_id'] == setting_id), None)
 
@@ -194,28 +194,28 @@ def default_settings():
 #====================================GENERAL====================================#
 #===============================================================================#
 #==================== General
-{'setting_id': 'auto_start_flolight', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'addon_icon_choice', 'setting_type': 'string', 'setting_default': 'resources/media/addon_icons/flolight_icon_01.png'},
+{'setting_id': 'auto_start_catlight', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'addon_icon_choice', 'setting_type': 'string', 'setting_default': 'resources/media/addon_icons/catlight_icon_01.png'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': kodi_utils.addon_fanart(), 'browse_mode': '2'},
 {'setting_id': 'limit_concurrent_threads', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'max_threads', 'setting_type': 'action', 'setting_default': '60', 'min_value': '10', 'max_value': '250'},
 #==================== Manage Updates
 {'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
 {'setting_id': 'update.delay', 'setting_type': 'action', 'setting_default': '10', 'min_value': '10', 'max_value': '300'},
-{'setting_id': 'update.username', 'setting_type': 'string', 'setting_default': 'FlolightAnonyMouse'},
-{'setting_id': 'update.location', 'setting_type': 'string', 'setting_default': 'FlolightAnonyMouse.github.io'},
+{'setting_id': 'update.username', 'setting_type': 'string', 'setting_default': 'CatlightAnonyMouse'},
+{'setting_id': 'update.location', 'setting_type': 'string', 'setting_default': 'CatlightAnonyMouse.github.io'},
 #==================== Watched Indicators
-{'setting_id': 'watched_indicators', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Flo Light', '1': 'Trakt'}},
+{'setting_id': 'watched_indicators', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Cat Light', '1': 'Trakt'}},
 #======+============= Trakt Cache
 {'setting_id': 'trakt.sync_interval', 'setting_type': 'action', 'setting_default': '60', 'min_value': '5', 'max_value': '600'},
 {'setting_id': 'trakt.refresh_widgets', 'setting_type': 'boolean', 'setting_default': 'true'},
 #==================== UTC Time Offset
 {'setting_id': 'datetime.offset', 'setting_type': 'action', 'setting_default': '0', 'min_value': '-15', 'max_value': '15'},
 #==================== Downloads
-{'setting_id': 'movie_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.flolight/Movies Downloads/', 'browse_mode': '0'},
-{'setting_id': 'tvshow_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.flolight/TV Show Downloads/', 'browse_mode': '0'},
-{'setting_id': 'premium_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.flolight/Premium Downloads/', 'browse_mode': '0'},
-{'setting_id': 'image_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.flolight/Image Downloads/', 'browse_mode': '0'},
+{'setting_id': 'movie_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.catlight/Movies Downloads/', 'browse_mode': '0'},
+{'setting_id': 'tvshow_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.catlight/TV Show Downloads/', 'browse_mode': '0'},
+{'setting_id': 'premium_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.catlight/Premium Downloads/', 'browse_mode': '0'},
+{'setting_id': 'image_download_directory', 'setting_type': 'path', 'setting_default': 'special://profile/addon_data/plugin.video.catlight/Image Downloads/', 'browse_mode': '0'},
 
 
 #================================================================================#
@@ -511,7 +511,7 @@ def default_settings():
 #======================================HIDDEN=============================================#
 #=========================================================================================#
 {'setting_id': 'reuse_language_invoker', 'setting_type': 'string', 'setting_default': 'true'},
-{'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'flolightam_icon_01'},
+{'setting_id': 'addon_icon_choice_name', 'setting_type': 'string', 'setting_default': 'catlightam_icon_01'},
 {'setting_id': 'widget_refresh_timer_name', 'setting_type': 'string', 'setting_default': 'Off'},
 {'setting_id': 'mpaa_region_display_name', 'setting_type': 'string', 'setting_default': 'United States'},
 {'setting_id': 'lists_cache_duraton_display_name', 'setting_type': 'string', 'setting_default': '1 Day'},

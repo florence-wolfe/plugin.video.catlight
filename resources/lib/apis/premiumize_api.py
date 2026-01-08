@@ -14,7 +14,7 @@ from modules.kodi_utils import sleep, ok_dialog, progress_dialog, notification
 
 class PremiumizeAPI:
 	def __init__(self):
-		self.token = get_setting('flolight.pm.token', 'empty_setting')
+		self.token = get_setting('catlight.pm.token', 'empty_setting')
 
 	def auth(self):
 		self.token = ''
@@ -40,7 +40,7 @@ class PremiumizeAPI:
 			response = self._post(poll_url, data)
 			if 'error' in response:
 				time_passed = time.time() - start
-				progress = int(100 * time_passed/float(expires_in))
+				progress = int(100 * time_passed/catat(expires_in))
 				progressDialog.update(content, progress)
 				continue
 			try:
@@ -190,7 +190,7 @@ class PremiumizeAPI:
 		return url + '|' + urlencode(self.headers())
 
 	def headers(self):
-		return {'User-Agent': 'Flo Light for Kodi', 'Authorization': 'Bearer %s' % self.token}
+		return {'User-Agent': 'Cat Light for Kodi', 'Authorization': 'Bearer %s' % self.token}
 
 	def _get(self, url, data={}):
 		if self.token in ('empty_setting', ''): return None

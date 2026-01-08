@@ -64,18 +64,18 @@ def get_personal_lists(params):
 	random, shuffle_lists = params.get('random', 'false') == 'true', params.get('shuffle', 'false') == 'true'
 	handle = int(sys.argv[1])
 	try:
-		data = get_all_personal_lists(get_setting('flolight.personal_list.list_sort', '0'))
+		data = get_all_personal_lists(get_setting('catlight.personal_list.list_sort', '0'))
 		if data:
 			if shuffle_lists:
 				returning_to_list = 'build_personal_lists_contents' in kodi_utils.folder_path()
 				if returning_to_list:
-					try: data = json.loads(kodi_utils.get_property('flolight.personal.lists.order'))
+					try: data = json.loads(kodi_utils.get_property('catlight.personal.lists.order'))
 					except: pass
 				else:
 					shuffle(data)
-					kodi_utils.set_property('flolight.personal.lists.order', json.dumps(data))
+					kodi_utils.set_property('catlight.personal.lists.order', json.dumps(data))
 			else:
-				kodi_utils.clear_property('flolight.personal.lists.order')
+				kodi_utils.clear_property('catlight.personal.lists.order')
 			result = list(_process())
 		else: result = list(_new_process())
 		kodi_utils.add_items(handle, result)
@@ -106,7 +106,7 @@ def build_personal_list(params):
 		use_result = 'result' in params
 		list_name, author, sort_order = params.get('list_name'), params.get('author'), params.get('sort_order')
 		page_no, paginate_start = int(params.get('new_page', '1')), int(params.get('paginate_start', '0'))
-		if page_no == 1 and not is_external: kodi_utils.set_property('flolight.exit_params', kodi_utils.folder_path())
+		if page_no == 1 and not is_external: kodi_utils.set_property('catlight.exit_params', kodi_utils.folder_path())
 		if use_result: result = params.get('result', [])
 		else: result = get_personal_list(params)
 		process_list, total_pages, paginate_start = _paginate_list(result, page_no, paginate_start)
@@ -199,7 +199,7 @@ def make_new_personal_list(params):
 		suggested_list_name = chosen_list.get('name')
 		suggested_author = chosen_list.get('user')
 		params.update({'suggested_list_name': suggested_list_name, 'suggested_author': suggested_author, 'chosen_list': chosen_list})
-		if suggested_author in ('Collection', 'Watchlist'): suggested_author = get_setting('flolight.trakt.user')
+		if suggested_author in ('Collection', 'Watchlist'): suggested_author = get_setting('catlight.trakt.user')
 	list_name = personal_list_name(suggested_list_name)
 	if list_name == None: return None, None
 	author = personal_list_author(suggested_author)
@@ -449,7 +449,7 @@ class ExternalImport:
 			meta = function(id_type, original_id, self.api_key, self.mpaa, self.current_time, self.current_timestamp)
 			title, media_id, release_date, date_added = meta['title'], meta['tmdb_id'], meta['premiered'], self.current_timestamp + order
 			self.results_append({'media_id': str(media_id), 'title': title, 'type': m_type, 'release_date': release_date, 'date_added': str(date_added), 'order': order})
-			if self.progressDialog: self.progressDialog.update(meta['title'], int(float(len(self.results)) / float(self.total_items) * 100), meta['poster'])
+			if self.progressDialog: self.progressDialog.update(meta['title'], int(catat(len(self.results)) / catat(self.total_items) * 100), meta['poster'])
 		except: pass
 	
 	def run(self):

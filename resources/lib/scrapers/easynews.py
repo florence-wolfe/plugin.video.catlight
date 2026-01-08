@@ -29,7 +29,7 @@ class source:
 						if filter_title and not source_utils.check_title(title, file_name, self.aliases, self.year, self.season, self.episode): continue
 						if filter_lang and not any(i in lang_filters for i in item['language']) : continue
 						display_name = clean_file_name(file_name).replace('html', ' ').replace('+', ' ').replace('-', ' ')
-						url_dl, size = item['url_dl'], round(float(int(item['rawSize']))/1073741824, 2)
+						url_dl, size = item['url_dl'], round(catat(int(item['rawSize']))/1073741824, 2)
 						video_quality, details = source_utils.get_file_info(name_info=source_utils.release_info_format(file_name),
 									default_quality=self._quality_estimate(int(item.get('width', 0))))
 						source_item = {'name': file_name, 'display_name': display_name, 'quality': video_quality, 'size': size, 'size_label': '%.2f GB' % size, 'debrid': self.scrape_provider,

@@ -12,14 +12,14 @@ from modules.kodi_utils import sleep, ok_dialog, progress_dialog, notification
 
 class RealDebridAPI:
 	def __init__(self):
-		self.client_ID = get_setting('flolight.rd.client_id', 'empty_setting')
+		self.client_ID = get_setting('catlight.rd.client_id', 'empty_setting')
 		if self.client_ID in ('empty_setting', ''): self.client_ID = 'X245A4XAIBGVM'
-		url = {'true': 'app.real-debrid.com', 'false': 'api.real-debrid.com'}[get_setting('flolight.rd.alternate_base_url', 'false')]
+		url = {'true': 'app.real-debrid.com', 'false': 'api.real-debrid.com'}[get_setting('catlight.rd.alternate_base_url', 'false')]
 		self.base_url = 'https://%s/rest/1.0/' % url
 		self.auth_url = 'https://%s/oauth/v2/' % url
-		self.token = get_setting('flolight.rd.token', 'empty_setting')
-		self.secret = get_setting('flolight.rd.secret', 'empty_setting')
-		self.refresh = get_setting('flolight.rd.refresh', 'empty_setting')
+		self.token = get_setting('catlight.rd.token', 'empty_setting')
+		self.secret = get_setting('catlight.rd.secret', 'empty_setting')
+		self.refresh = get_setting('catlight.rd.refresh', 'empty_setting')
 		self.device_code = ''
 		self.refresh_retries = 0
 		self.break_auth_loop = False
@@ -50,7 +50,7 @@ class RealDebridAPI:
 			except: continue
 			if 'error' in response:
 				time_passed = time.time() - start
-				progress = int(100 * time_passed/float(expires_in))
+				progress = int(100 * time_passed/catat(expires_in))
 				progressDialog.update(content, progress)
 				continue
 			try:

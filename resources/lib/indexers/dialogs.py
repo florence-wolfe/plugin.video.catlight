@@ -19,7 +19,7 @@ def list_display_order_choice(params):
 def language_invoker_choice(params):
 	from xml.dom.minidom import parse as mdParse
 	kodi_utils.close_all_dialog()
-	addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.flolight/addon.xml')
+	addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.catlight/addon.xml')
 	root = mdParse(addon_xml)
 	invoker_instance = root.getElementsByTagName('reuselanguageinvoker')[0].firstChild
 	current_invoker_setting = invoker_instance.data
@@ -36,10 +36,10 @@ def language_invoker_choice(params):
 def addon_icon_choice(params):
 	import os
 	from xml.dom.minidom import parse as mdParse
-	addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.flolight/addon.xml')
+	addon_xml = kodi_utils.translate_path('special://home/addons/plugin.video.catlight/addon.xml')
 	root = mdParse(addon_xml)
 	icon_instance = root.getElementsByTagName('icon')[0].firstChild
-	icons_path = 'special://home/addons/plugin.video.flolight/resources/media/addon_icons'
+	icons_path = 'special://home/addons/plugin.video.catlight/resources/media/addon_icons'
 	all_icons = kodi_utils.list_dirs(kodi_utils.translate_path(icons_path))[1]
 	all_icons.sort()
 	list_items = [{'line1': i, 'icon': kodi_utils.translate_path(os.path.join(icons_path, i))} for i in all_icons]
@@ -123,7 +123,7 @@ def personallists_manager_choice(params):
 	from indexers.personal_lists import get_all_personal_lists, make_new_personal_list, new_list_check
 	icon = params.get('icon', None) or kodi_utils.get_icon('lists')
 	list_type = params['list_type']
-	all_lists = get_all_personal_lists(get_setting('flolight.personal_list.list_sort', '0'))
+	all_lists = get_all_personal_lists(get_setting('catlight.personal_list.list_sort', '0'))
 	choices = []
 	if not all_lists: action = 'add_new'
 	else:
@@ -301,7 +301,7 @@ def widget_refresh_timer_choice(params):
 	choices = [{'name': 'OFF', 'value': '0'}]
 	choices.extend([{'name': 'Every %s Minutes' % i, 'value': str(i)} for i in range(5,25,5)])
 	choices.extend([{'name': 'Every %s Minutes' % i, 'value': str(i)} for i in range(30,65,10)])
-	choices.extend([{'name': 'Every %s Hours' % (float(i)/60), 'value': str(i)} for i in range(90,720,30)])
+	choices.extend([{'name': 'Every %s Hours' % (catat(i)/60), 'value': str(i)} for i in range(90,720,30)])
 	list_items = [{'line1': i['name']} for i in choices]
 	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
 	choice = kodi_utils.select_dialog(choices, **kwargs)
@@ -607,7 +607,7 @@ def set_quality_choice(params):
 	icon = params.get('icon', None) or ''
 	dl = ['Include 4K', 'Include 1080p', 'Include 720p', 'Include SD']
 	fl = ['4K', '1080p', '720p', 'SD']
-	q_setting = get_setting('flolight.%s' % quality_setting).split(', ')
+	q_setting = get_setting('catlight.%s' % quality_setting).split(', ')
 	try: preselect = [fl.index(i) for i in q_setting]
 	except: preselect = []
 	list_items = [{'line1': item, 'icon': icon} for item in dl]
@@ -628,11 +628,11 @@ def extras_buttons_choice(params):
 			for item in range(10, 18):
 				setting_id = 'extras.%s.button%s' % (_type, item)
 				try:
-					button_action = get_setting('flolight.%s' % setting_id)
+					button_action = get_setting('catlight.%s' % setting_id)
 					button_label = extras_button_label_values[_type][button_action]
 				except:
-					set_setting(setting_id.replace('flolight.', ''), default_setting_values(setting_id)['setting_default'])
-					button_action = get_setting('flolight.%s' % setting_id)
+					set_setting(setting_id.replace('catlight.', ''), default_setting_values(setting_id)['setting_default'])
+					button_action = get_setting('catlight.%s' % setting_id)
 					button_label = extras_button_label_values[_type][button_action]
 				button_dict[setting_id] = {'button_action': button_action, 'button_label': button_label, 'button_name': 'Button %s' % str(item - 9)}
 				orig_button_dict[setting_id] = {'button_action': button_action, 'button_label': button_label, 'button_name': 'Button %s' % str(item - 9)}
@@ -696,7 +696,7 @@ def set_language_filter_choice(params):
 	lang_choices = language_choices()
 	if include_none == 'false': lang_choices.pop('None')
 	dl, fl = list(lang_choices.keys()), list(lang_choices.values())
-	set_filter = get_setting('flolight.%s' % filter_setting_id).split(', ')
+	set_filter = get_setting('catlight.%s' % filter_setting_id).split(', ')
 	try: preselect = [fl.index(i) for i in set_filter]
 	except: preselect = []
 	list_items = [{'line1': item} for item in dl]
@@ -709,7 +709,7 @@ def set_language_filter_choice(params):
 	else: set_setting(filter_setting_id, choice)
 
 def enable_scrapers_choice(params={}):
-	icon = params.get('icon', None) or kodi_utils.get_icon('flolight')
+	icon = params.get('icon', None) or kodi_utils.get_icon('catlight')
 	scrapers = ['external', 'easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'oc_cloud', 'tb_cloud', 'folders']
 	cloud_scrapers = {'rd_cloud': 'rd.enabled', 'pm_cloud': 'pm.enabled', 'ad_cloud': 'ad.enabled', 'oc_cloud': 'oc.enabled', 'tb_cloud': 'tb.enabled'}
 	scraper_names = ['EXTERNAL SCRAPERS', 'EASYNEWS', 'RD CLOUD', 'PM CLOUD', 'AD CLOUD', 'OC CLOUD', 'TB CLOUD', 'FOLDERS 1-5']
@@ -756,7 +756,7 @@ def clear_favorites_choice(params={}):
 
 def scraper_color_choice(params):
 	setting = params.get('setting_id')
-	current_setting, original_highlight = get_setting('flolight.%s' % setting), default_setting_values(setting)['setting_default']
+	current_setting, original_highlight = get_setting('catlight.%s' % setting), default_setting_values(setting)['setting_default']
 	if current_setting != original_highlight:
 		action = kodi_utils.confirm_dialog(text='Set new Highlight or Restore Default Highlight?', ok_label='Set New', cancel_label='Restore Default', default_control=10)
 		if action == None: return
@@ -766,7 +766,7 @@ def scraper_color_choice(params):
 
 def personal_list_unseen_color_choice(params):
 	setting = 'personal_list.unseen_highlight'
-	current_setting, original_highlight = get_setting('flolight.%s' % setting), default_setting_values(setting)['setting_default']
+	current_setting, original_highlight = get_setting('catlight.%s' % setting), default_setting_values(setting)['setting_default']
 	if current_setting != original_highlight:
 		action = kodi_utils.confirm_dialog(text='Set new Highlight or Restore Default Highlight?', ok_label='Set New', cancel_label='Restore Default', default_control=10)
 		if action == None: return
@@ -810,7 +810,7 @@ def options_menu_choice(params, meta=None):
 	tmdb_id, content, poster = params_get('tmdb_id', None), params_get('content', None), params_get('poster', None)
 	is_external, from_extras = params_get('is_external') in (True, 'True', 'true'), params_get('from_extras', 'false') == 'true'
 	season, episode = params_get('season', ''), params_get('episode', '')
-	single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_flolight', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
+	single_ep_list = ('episode.progress', 'episode.recently_watched', 'episode.next_trakt', 'episode.next_catlight', 'episode.trakt_recently_aired', 'episode.trakt_calendar')
 	if not content: content = kodi_utils.container_content()[:-1]
 	menu_type = content
 	if content.startswith('episode.'): content = 'episode'
@@ -949,7 +949,7 @@ def media_extra_info_choice(params):
 			append('[B]Status:[/B] %s' % extra_info['status'])
 			append('[B]Premiered:[/B] %s' % meta['premiered'])
 			append('[B]Rating:[/B] %s (%s Votes)' % (str(round(meta['rating'], 1)), meta['votes']))
-			append('[B]Runtime:[/B] %s mins' % int(float(meta['duration'])/60))
+			append('[B]Runtime:[/B] %s mins' % int(catat(meta['duration'])/60))
 			append('[B]Genre/s:[/B] %s' % ', '.join(meta['genre']))
 			append('[B]Budget:[/B] %s' % extra_info['budget'])
 			append('[B]Revenue:[/B] %s' % extra_info['revenue'])
@@ -966,7 +966,7 @@ def media_extra_info_choice(params):
 			append('[B]Status:[/B] %s' % extra_info['status'])
 			append('[B]Premiered:[/B] %s' % meta['premiered'])
 			append('[B]Rating:[/B] %s (%s Votes)' % (str(round(meta['rating'], 1)), meta['votes']))
-			append('[B]Runtime:[/B] %d mins' % int(float(meta['duration'])/60))
+			append('[B]Runtime:[/B] %d mins' % int(catat(meta['duration'])/60))
 			append('[B]Classification:[/B] %s' % meta['mpaa'])
 			append('[B]Genre/s:[/B] %s' % ', '.join(meta['genre']))
 			append('[B]Networks:[/B] %s' % ', '.join(meta['studio']))

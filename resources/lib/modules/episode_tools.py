@@ -53,19 +53,19 @@ class EpisodeTools:
 			if continual:
 				episode_list = []
 				try:
-					episode_history = json.loads(kodi_utils.get_property('flolight.random_episode_history'))
+					episode_history = json.loads(kodi_utils.get_property('catlight.random_episode_history'))
 					if tmdb_key in episode_history: episode_list = episode_history[tmdb_key]
-					else: kodi_utils.set_property('flolight.random_episode_history', '')
-				except: kodi_utils.set_property('flolight.random_episode_history', '')
+					else: kodi_utils.set_property('catlight.random_episode_history', '')
+				except: kodi_utils.set_property('catlight.random_episode_history', '')
 				episodes_data = [i for i in episodes_data if not i in episode_list]
 				if not episodes_data:
-					kodi_utils.set_property('flolight.random_episode_history', '')
+					kodi_utils.set_property('catlight.random_episode_history', '')
 					return self.get_random_episode(continual=True)
 			chosen_episode = random.choice(episodes_data)
 			if continual:
 				episode_list.append(chosen_episode)
 				episode_history = {tmdb_key: episode_list}
-				kodi_utils.set_property('flolight.random_episode_history', json.dumps(episode_history))
+				kodi_utils.set_property('catlight.random_episode_history', json.dumps(episode_history))
 			title, season, episode = self.meta['title'], int(chosen_episode['season']), int(chosen_episode['episode'])
 			query = title + ' S%.2dE%.2d' % (season, episode)
 			display_name = '%s - %dx%.2d' % (title, season, episode)

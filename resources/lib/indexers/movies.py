@@ -43,7 +43,7 @@ class Movies:
 			else: var_module, import_function = 'apis.%s_api' % self.action.split('_')[0], self.action
 			try: function = manual_function_import(var_module, import_function)
 			except: pass
-			if page_no == 1 and not self.is_external: kodi_utils.set_property('flolight.exit_params', kodi_utils.folder_path())
+			if page_no == 1 and not self.is_external: kodi_utils.set_property('catlight.exit_params', kodi_utils.folder_path())
 			if self.action in self.main:
 				data = function(page_no)
 				results = data['results']
@@ -220,18 +220,18 @@ class Movies:
 			listitem.setArt({'poster': poster, 'fanart': fanart, 'icon': poster, 'clearlogo': clearlogo, 'landscape': landscape, 'thumb': thumb})
 			set_properties({
 				'belongs_to_collection': belongs_to_movieset,
-				'flolight.extras_params': extras_params,
-				'flolight.options_params': options_params,
-				'flolight.playback_options_params': playback_options_params,
-				'flolight.browse_movie_set_params': browse_movie_set_params,
-				'flolight.browse_recommended_params': browse_recommended_params,
-				'flolight.browse_more_like_this_params': browse_more_like_this_params,
-				'flolight.browse_similar_params': browse_similar_params,
-				'flolight.browse_in_trakt_list_params': browse_in_trakt_list_params,
-				'flolight.trakt_manager_params': trakt_manager_params,
-				'flolight.personal_manager_params': personal_manager_params,
-				'flolight.tmdb_manager_params': tmdb_manager_params,
-				'flolight.favorites_manager_params': favorites_manager_params
+				'catlight.extras_params': extras_params,
+				'catlight.options_params': options_params,
+				'catlight.playback_options_params': playback_options_params,
+				'catlight.browse_movie_set_params': browse_movie_set_params,
+				'catlight.browse_recommended_params': browse_recommended_params,
+				'catlight.browse_more_like_this_params': browse_more_like_this_params,
+				'catlight.browse_similar_params': browse_similar_params,
+				'catlight.browse_in_trakt_list_params': browse_in_trakt_list_params,
+				'catlight.trakt_manager_params': trakt_manager_params,
+				'catlight.personal_manager_params': personal_manager_params,
+				'catlight.tmdb_manager_params': tmdb_manager_params,
+				'catlight.favorites_manager_params': favorites_manager_params
 				})
 			self.append(((url_params, listitem, False), _position))
 		except: pass
@@ -242,7 +242,7 @@ class Movies:
 		self.current_date, self.current_time, self.watched_indicators = get_datetime(), get_current_timestamp(), settings.watched_indicators()
 		self.cm_sort_order = settings.cm_sort_order()
 		self.perform_cm_sort = self.cm_sort_order != settings.cm_default_order()
-		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'FLOLAM'
+		self.watched_title = 'Trakt' if self.watched_indicators == 1 else 'CATLAM'
 		watched_db = watched_status.get_database(self.watched_indicators)
 		self.watched_info, self.bookmarks = watched_status.watched_info_movie(watched_db), watched_status.get_bookmarks_movie(watched_db)
 		self.window_command = 'ActivateWindow(Videos,%s,return)' if self.is_external else 'Container.Update(%s)'

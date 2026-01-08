@@ -9,7 +9,7 @@ class Navigator:
 	def __init__(self, params):
 		self.params = params
 		self.params_get = self.params.get
-		self.category_name = self.params_get('name', 'Flo Light')
+		self.category_name = self.params_get('name', 'Cat Light')
 		self.list_name = self.params_get('action', 'RootList')
 		self.is_external = k.external()
 		self.make_listitem = k.make_listitem
@@ -205,10 +205,10 @@ class Navigator:
 
 	def tools(self):
 		self.add({'mode': 'open_settings', 'isFolder': 'false'}, 'Settings', 'settings')
-		if get_setting('flolight.external_scraper.module') not in ('empty_setting', ''):
+		if get_setting('catlight.external_scraper.module') not in ('empty_setting', ''):
 			self.add({'mode': 'open_external_scraper_settings', 'isFolder': 'false'}, 'External Scraper Settings', 'settings')
 		self.add({'mode': 'navigator.tips'}, 'Tips for Use', 'settings2')
-		if get_setting('flolight.use_viewtypes', 'true') == 'true' and not get_setting('flolight.manual_viewtypes', 'false') == 'true':
+		if get_setting('catlight.use_viewtypes', 'true') == 'true' and not get_setting('catlight.manual_viewtypes', 'false') == 'true':
 			self.add({'mode': 'navigator.set_view_modes'}, 'Set Views', 'settings2')
 		self.add({'mode': 'navigator.changelog_utils'}, 'Changelog & Log Utils', 'settings2')
 		self.add({'mode': 'build_next_episode_manager'}, 'TV Shows Progress Manager', 'settings2')
@@ -259,8 +259,8 @@ class Navigator:
 
 	def changelog_utils(self):
 		log_loc, old_log_loc = k.translate_path('special://logpath/kodi.log'), k.translate_path('special://logpath/kodi.old.log')
-		flolight_clogpath = k.translate_path('special://home/addons/plugin.video.flolight/resources/text/changelog.txt')
-		self.add({'mode': 'show_text', 'heading': 'Changelog', 'file': flolight_clogpath, 'font_size': 'large', 'isFolder': 'false'}, 'Changelog', 'lists')
+		catlight_clogpath = k.translate_path('special://home/addons/plugin.video.catlight/resources/text/changelog.txt')
+		self.add({'mode': 'show_text', 'heading': 'Changelog', 'file': catlight_clogpath, 'font_size': 'large', 'isFolder': 'false'}, 'Changelog', 'lists')
 		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer', 'file': log_loc, 'kodi_log': 'true', 'isFolder': 'false'}, 'Kodi Log Viewer', 'lists')
 		self.add({'mode': 'show_text', 'heading': 'Kodi Log Viewer (Old)', 'file': old_log_loc, 'kodi_log': 'true', 'isFolder': 'false'}, 'Kodi Log Viewer (Old)', 'lists')
 		self.add({'mode': 'upload_logfile', 'isFolder': 'false'}, 'Upload Kodi Log to Pastebin', 'lists')
@@ -447,7 +447,7 @@ class Navigator:
 				iconImage = item_get('iconImage', None)
 				icon = iconImage
 				if iconImage:
-					if iconImage.startswith('http') or 'plugin.video.flolight' in iconImage: original_image = True
+					if iconImage.startswith('http') or 'plugin.video.catlight' in iconImage: original_image = True
 					else: original_image = False
 				else: icon, original_image = folder_icon, False
 				cm_items = [
@@ -486,11 +486,11 @@ class Navigator:
 			k.container_refresh()
 
 	def exit_media_menu(self):
-		params = k.get_property('flolight.exit_params')
+		params = k.get_property('catlight.exit_params')
 		if params: return k.container_refresh_input(params)
 
 	def tips(self):
-		tips_location = 'special://home/addons/plugin.video.flolight/resources/text/tips'
+		tips_location = 'special://home/addons/plugin.video.catlight/resources/text/tips'
 		files = sorted(k.list_dirs(tips_location)[1])
 		tips_location += '/%s'
 		tips_list = []

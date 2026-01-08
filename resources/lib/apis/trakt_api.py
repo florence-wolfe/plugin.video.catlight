@@ -30,13 +30,13 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 	def send_query():
 		resp = None
 		if with_auth:
-			while kodi_utils.get_property('flolight.trakt_refreshing_token') == 'true':
+			while kodi_utils.get_property('catlight.trakt_refreshing_token') == 'true':
 				kodi_utils.logger('refreshing trakt token', '')
 				kodi_utils.sleep(250)
-			try: expires_at = float(get_setting('flolight.trakt.expires'))
+			try: expires_at = catat(get_setting('catlight.trakt.expires'))
 			except: expires_at = 0.0
 			if time.time() > expires_at: trakt_refresh_token()
-			token = get_setting('flolight.trakt.token')
+			token = get_setting('catlight.trakt.token')
 			if token: headers['Authorization'] = 'Bearer ' + token
 		try:
 			if method:
@@ -135,17 +135,17 @@ def trakt_refresh_token():
 		if CLIENT_ID in (None, 'empty_setting', ''): return no_client_key()
 		CLIENT_SECRET = settings.trakt_secret()
 		if CLIENT_SECRET in (None, 'empty_setting', ''): return no_secret_key()
-		kodi_utils.set_property('flolight.trakt_refreshing_token', 'true')
+		kodi_utils.set_property('catlight.trakt_refreshing_token', 'true')
 		data = {        
 			'client_id': CLIENT_ID, 'client_secret': CLIENT_SECRET, 'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
-			'grant_type': 'refresh_token', 'refresh_token': get_setting('flolight.trakt.refresh')}
+			'grant_type': 'refresh_token', 'refresh_token': get_setting('catlight.trakt.refresh')}
 		response = call_trakt("oauth/token", data=data, with_auth=False)
 		if response:
 			set_setting('trakt.token', response['access_token'])
 			set_setting('trakt.refresh', response['refresh_token'])
 			set_setting('trakt.expires', str(time.time() + response['expires_in']))
 	except: pass
-	kodi_utils.clear_property('flolight.trakt_refreshing_token')
+	kodi_utils.clear_property('catlight.trakt_refreshing_token')
 
 def trakt_authenticate(dummy=''):
 	code = trakt_get_device_code()
@@ -179,7 +179,7 @@ def trakt_revoke_authentication(dummy=''):
 	if CLIENT_ID in (None, 'empty_setting', ''): return no_client_key()
 	CLIENT_SECRET = settings.trakt_secret()
 	if CLIENT_SECRET in (None, 'empty_setting', ''): return no_secret_key()
-	data = {'token': get_setting('flolight.trakt.token'), 'client_id': CLIENT_ID, 'client_secret': CLIENT_SECRET}
+	data = {'token': get_setting('catlight.trakt.token'), 'client_id': CLIENT_ID, 'client_secret': CLIENT_SECRET}
 	response = call_trakt("oauth/revoke", data=data, with_auth=False)
 
 def trakt_movies_trending(page_no):
@@ -328,8 +328,8 @@ def trakt_progress(action, media, media_id, percent, season=None, episode=None, 
 		result = call_trakt(url, is_delete=True)
 	else:
 		url = 'scrobble/pause'
-		if media in ('movie', 'movies'): data = {'movie': {'ids': {'tmdb': media_id}}, 'progress': float(percent)}
-		else: data = {'show': {'ids': {'tmdb': media_id}}, 'episode': {'season': int(season), 'number': int(episode)}, 'progress': float(percent)}
+		if media in ('movie', 'movies'): data = {'movie': {'ids': {'tmdb': media_id}}, 'progress': catat(percent)}
+		else: data = {'show': {'ids': {'tmdb': media_id}}, 'episode': {'season': int(season), 'number': int(episode)}, 'progress': catat(percent)}
 		call_trakt(url, data=data)
 	if refresh_trakt: trakt_sync_activities()
 
@@ -744,8 +744,8 @@ def trakt_get_my_calendar(recently_aired, current_date):
 def trakt_calendar_days(recently_aired, current_date):
 	if recently_aired: start, finish = (current_date - timedelta(days=14)).strftime('%Y-%m-%d'), '14'
 	else:
-		previous_days = int(get_setting('flolight.trakt.calendar_previous_days', '0'))
-		future_days = int(get_setting('flolight.trakt.calendar_future_days', '7'))
+		previous_days = int(get_setting('catlight.trakt.calendar_previous_days', '0'))
+		future_days = int(get_setting('catlight.trakt.calendar_future_days', '7'))
 		start = (current_date - timedelta(days=previous_days)).strftime('%Y-%m-%d')
 		finish = str(previous_days + future_days)
 	return start, finish
@@ -768,8 +768,8 @@ def trakt_sync_activities(force_update=False):
 	# 	clear_cache_watched_tvshow_status(watched_indicators=1)
 	def refresh_token_check():
 		current_time = time.time()
-		sync_interval = int(get_setting('flolight.trakt.sync_interval', '60')) * 60
-		try: expires_at = float(get_setting('flolight.trakt.expires'))
+		sync_interval = int(get_setting('catlight.trakt.sync_interval', '60')) * 60
+		try: expires_at = catat(get_setting('catlight.trakt.expires'))
 		except: expires_at = 0.0
 		if current_time + sync_interval >= expires_at: return True
 	def clear_properties(media_type):
@@ -781,7 +781,7 @@ def trakt_sync_activities(force_update=False):
 		except: result = True
 		return result
 	def _check_daily_expiry():
-		return int(time.time()) >= int(get_setting('flolight.trakt.next_daily_clear', '0'))
+		return int(time.time()) >= int(get_setting('catlight.trakt.next_daily_clear', '0'))
 	if refresh_token_check(): trakt_refresh_token()
 	if force_update: trakt_cache.clear_all_trakt_cache_data(silent=True, refresh=False)
 	elif _check_daily_expiry():

@@ -207,7 +207,7 @@ class MenuEditor:
 		return kodi_utils.select_dialog(index_list, **kwargs)
 
 	def _icon_select(self, default_icon=''):
-		if default_icon.startswith('http') or 'plugin.video.flolight' in default_icon: return default_icon
+		if default_icon.startswith('http') or 'plugin.video.catlight' in default_icon: return default_icon
 		all_icons = kodi_utils.get_all_icon_vars()
 		if default_icon:
 			try:
@@ -246,12 +246,12 @@ class MenuEditor:
 		kodi_utils.sleep(500)
 		if refresh: kodi_utils.kodi_refresh()
 
-	def _path_browser(self, label='', file='plugin://plugin.video.flolight?mode=navigator.main&full_list=true', thumbnail=''):
+	def _path_browser(self, label='', file='plugin://plugin.video.catlight?mode=navigator.main&full_list=true', thumbnail=''):
 		kodi_utils.show_busy_dialog()
 		results = kodi_utils.jsonrpc_get_directory(file)
 		kodi_utils.hide_busy_dialog()
 		list_items, function_items = [], []
-		if file != 'plugin://plugin.video.flolight?mode=navigator.main&full_list=true':
+		if file != 'plugin://plugin.video.catlight?mode=navigator.main&full_list=true':
 			list_items.append({'line1': 'Use [B]%s[/B] As Path' % label, 'icon': thumbnail})
 			function_items.append(json.dumps({'label': label, 'file': file, 'thumbnail': thumbnail}))
 		list_items.extend([{'line1': '%s >>' % i['label'], 'icon': i['thumbnail']} for i in results])
@@ -265,14 +265,14 @@ class MenuEditor:
 		else: return self._path_browser(**choice)
 
 	def _get_menu_item(self, path):
-		return dict(parse_qsl(path.replace('plugin://plugin.video.flolight/?','')))
+		return dict(parse_qsl(path.replace('plugin://plugin.video.catlight/?','')))
 
 	def _get_icon_var(self, icon_path):
 		try:
 			all_icons = kodi_utils.get_all_icon_vars()
 			icon_value = unquote(icon_path)
 			icon_value = icon_value.replace('image://', '').replace('.png/', '').replace('.png', '')
-			icon_value = icon_value.split(kodi_utils.translate_path('special://home/addons/plugin.video.flolight/resources/media/icons/'))[1]
+			icon_value = icon_value.split(kodi_utils.translate_path('special://home/addons/plugin.video.catlight/resources/media/icons/'))[1]
 			icon_var = [i for i in all_icons if i == icon_value][0]
 		except: icon_var = 'folder'
 		return icon_var

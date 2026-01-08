@@ -14,10 +14,10 @@ from modules.kodi_utils import progress_dialog, notification, hide_busy_dialog, 
 
 class AllDebridAPI:
 	def __init__(self):
-		self.token = get_setting('flolight.ad.token', 'empty_setting')
+		self.token = get_setting('catlight.ad.token', 'empty_setting')
 		self.break_auth_loop = False
 		self.base_url = 'https://api.alldebrid.com/v4/'
-		self.user_agent = 'Flo Light for Kodi'
+		self.user_agent = 'Cat Light for Kodi'
 
 	def auth(self):
 		self.token = ''
@@ -46,7 +46,7 @@ class AllDebridAPI:
 			activated = response['activated']
 			if not activated:
 				time_passed = time.time() - start
-				progress = int(100 * time_passed/float(expires_in))
+				progress = int(100 * time_passed/catat(expires_in))
 				progressDialog.update(content, progress)
 				continue
 			try:

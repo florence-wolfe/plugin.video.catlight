@@ -1,5 +1,5 @@
 
-Flo Light allows you to choose how colors will be used to distinguish between scraper results.
+Cat Light allows you to choose how colors will be used to distinguish between scraper results.
 
 Go to Settings->Results->Results Color Highlights and choose firstly your desired setting for "Highlight Results Based On".
 The 3 choices are:

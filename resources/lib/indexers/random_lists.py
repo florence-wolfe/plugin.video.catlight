@@ -15,7 +15,7 @@ logger = kodi_utils.logger
 def refresh_widgets():
 	RandomWidgets().delete_like('random_list.%')
 	kodi_utils.kodi_refresh()
-	if get_setting('flolight.widget_refresh_notification', 'true') == 'true': kodi_utils.notification('Widgets Refreshed', 2500)
+	if get_setting('catlight.widget_refresh_notification', 'true') == 'true': kodi_utils.notification('Widgets Refreshed', 2500)
 
 def get_persistent_content(database, key, is_external):
 	results, refresh_cache, key = None, True, 'random_list.%s' % key
@@ -190,7 +190,7 @@ class RandomLists():
 			else: self.params.update({'list': result, 'id_type': 'imdb_id'})
 			self.list_items = self.function(self.params).worker()
 			self.category_name =  list_name
-		except: kodi_utils.clear_property('flolight.random_because_you_watched')
+		except: kodi_utils.clear_property('catlight.random_because_you_watched')
 		self.make_directory()
 
 	def random_trakt_lists(self):
@@ -360,8 +360,8 @@ class RandomLists():
 		kodi_utils.set_category(self.handle, self.category_name)
 		kodi_utils.end_directory(self.handle, cacheToDisc=False if self.is_external else True)
 		if self.is_external:
-			if self.folder_name: kodi_utils.set_property('flolight.%s' % self.folder_name, self.category_name)
-			else: kodi_utils.set_property('flolight.%s' % self.base_list_name, self.category_name)
+			if self.folder_name: kodi_utils.set_property('catlight.%s' % self.folder_name, self.category_name)
+			else: kodi_utils.set_property('catlight.%s' % self.base_list_name, self.category_name)
 		else: kodi_utils.set_view_mode(self.view_mode, self.content_type, self.is_external)
 
 	def get_function(self):
@@ -385,7 +385,7 @@ def random_shortcut_folders(folder_name, random_results):
 	if random_list.get('action') in ('tmdb_movies_discover', 'tmdb_tv_discover'): return RandomLists(random_list).run_random()
 	menu_type = random_check[random_list['mode']]
 	list_name = random_list.get('list_name', None) or random_list.get('name', None) or 'Random'
-	if is_external: kodi_utils.set_property('flolight.%s' % folder_name, list_name)
+	if is_external: kodi_utils.set_property('catlight.%s' % folder_name, list_name)
 	if menu_type == 'movie':
 		return Movies(random_list).fetch_list()
 	if menu_type == 'tvshow':

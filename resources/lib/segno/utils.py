@@ -53,8 +53,8 @@ def get_symbol_size(matrix_size, scale=1, border=None):
             The size of a module depends on the used output format; i.e.
             in a PNG context, a scaling factor of 2 indicates that a module
             has a size of 2 x 2 pixel. Some outputs (i.e. SVG) accept
-            floating point values.
-    :type scale: int or float
+            catating point values.
+    :type scale: int or catat
     :param int border: The border size or ``None`` to specify the
             default quiet zone (4 for QR Codes, 2 for Micro QR Codes).
     :rtype: tuple (width, height)
@@ -72,7 +72,7 @@ def check_valid_scale(scale):
     Raises a :py:exc:`ValueError` iff `scale` is negative or zero.
 
     :param scale: Scaling factor.
-    :type scale: float or int
+    :type scale: catat or int
     """
     if scale <= 0:
         raise ValueError(f'The scale must not be negative or zero. Got: "{scale}"')

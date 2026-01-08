@@ -45,7 +45,7 @@ def ad_downloads():
 			try:
 				cm = []
 				cm_append = cm.append
-				filename, size = item['filename'], float(int(item['size']))/1073741824
+				filename, size = item['filename'], catat(int(item['size']))/1073741824
 				name = clean_file_name(filename).upper()
 				display = '%02d | %.2f GB | [I]%s [/I]' % (count, size, name)
 				url_link = item['link_dl']
@@ -79,7 +79,7 @@ def ad_saved_links():
 			try:
 				cm = []
 				cm_append = cm.append
-				filename, size = item['filename'], float(int(item['size']))/1073741824
+				filename, size = item['filename'], catat(int(item['size']))/1073741824
 				name = clean_file_name(filename).upper()
 				display = '%02d | %.2f GB | [I]%s [/I]' % (count, size, name)
 				url_link = item['link']
@@ -114,7 +114,7 @@ def browse_ad_cloud(folder_id):
 				url_link = item['l']
 				name = clean_file_name(item['n']).upper()
 				size = item['s']
-				display_size = float(int(size))/1073741824
+				display_size = catat(int(size))/1073741824
 				display = '%02d | [B]FILE[/B] | %.2f GB | [I]%s [/I]' % (count, display_size, name)
 				url_params = {'mode': 'alldebrid.resolve_ad', 'url': url_link, 'play': 'true'}
 				down_file_params = {'mode': 'downloader.runner', 'name': name, 'url': url_link, 'action': 'cloud.alldebrid', 'image': icon}
@@ -141,8 +141,8 @@ def resolve_ad(params):
 	url = params['url']
 	resolved_link = AllDebrid.unrestrict_link(url)
 	if params.get('play', 'false') != 'true' : return resolved_link
-	from modules.player import FloLightPlayer
-	FloLightPlayer().run(resolved_link, 'video')
+	from modules.player import CatLightPlayer
+	CatLightPlayer().run(resolved_link, 'video')
 
 def ad_delete(file_id):
 	if not kodi_utils.confirm_dialog(): return

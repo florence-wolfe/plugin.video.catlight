@@ -46,7 +46,7 @@ class source:
 			self.sources = list(_process())
 		except Exception as e:
 			from modules.kodi_utils import logger
-			logger('FLO folders scraper Exception', str(e))
+			logger('CAT folders scraper Exception', str(e))
 		source_utils.internal_results(self.scraper_name, self.sources)
 		return self.sources
 
@@ -92,7 +92,7 @@ class source:
 	def _get_size(self, file):
 		if file.endswith('.strm'): return 'strm'
 		with open_file(file) as f: s = f.size()
-		return round(float(s)/1073741824, 2)
+		return round(catat(s)/1073741824, 2)
 
 	def _year_query_list(self):
 		return (str(self.year), str(self.year+1), str(self.year-1))

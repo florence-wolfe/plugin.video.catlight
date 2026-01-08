@@ -7,9 +7,9 @@ from caches.episode_groups_cache import episode_groups_cache
 from caches.settings_cache import get_setting
 from scrapers import external, folders
 from modules import debrid, kodi_utils, settings, metadata, watched_status
-from modules.player import FloLightPlayer
+from modules.player import CatLightPlayer
 from modules.source_utils import get_cache_expiry, make_alias_dict, include_exclude_filters
-from modules.utils import clean_file_name, string_to_float, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import
+from modules.utils import clean_file_name, string_to_catat, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import
 # logger = kodi_utils.logger
 
 class Sources():
@@ -57,8 +57,8 @@ class Sources():
 		self.ignore_scrape_filters = params_get('ignore_scrape_filters', 'false') == 'true'
 		self.nextep_settings, self.disable_autoplay_next_episode = params_get('nextep_settings', {}), params_get('disable_autoplay_next_episode', 'false') == 'true'
 		self.disabled_ext_ignored = params_get('disabled_ext_ignored', self.disabled_ext_ignored) == 'true'
-		self.folders_ignore_filters = get_setting('flolight.results.folders_ignore_filters', 'false') == 'true'
-		self.filter_size_method = int(get_setting('flolight.results.filter_size_method', '0'))
+		self.folders_ignore_filters = get_setting('catlight.results.folders_ignore_filters', 'false') == 'true'
+		self.filter_size_method = int(get_setting('catlight.results.filter_size_method', '0'))
 		self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')		
 		self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
 		self.episode_group_label, self.episode_id = params_get('episode_group_label', ''), params_get('episode_id', None)
@@ -76,7 +76,7 @@ class Sources():
 		self.limit_resolve = settings.limit_resolve()
 		self.weight_size = settings.size_sort_weighted()
 		self.sort_function, self.quality_filter = settings.results_sort_order(), self._quality_filter()
-		self.include_unknown_size = get_setting('flolight.results.size_unknown', 'false') == 'true'
+		self.include_unknown_size = get_setting('catlight.results.size_unknown', 'false') == 'true'
 		self.make_search_info()
 		if self.autoscrape: self.autoscrape_nextep_handler()
 		else: return self.get_sources()
@@ -192,13 +192,13 @@ class Sources():
 		else: folder_results = []
 		results = [i for i in results if i['quality'] in self.quality_filter]
 		if self.filter_size_method:
-			min_size = string_to_float(get_setting('flolight.results.%s_size_min' % self.media_type, '0'), '0') / 1000
+			min_size = string_to_catat(get_setting('catlight.results.%s_size_min' % self.media_type, '0'), '0') / 1000
 			if min_size == 0.0 and not self.include_unknown_size: min_size = 0.02
 			if self.filter_size_method == 1:
 				duration = self.meta['duration'] or (5400 if self.media_type == 'movie' else 2400)
-				max_size = ((0.125 * (0.90 * string_to_float(get_setting('results.line_speed', '25'), '25'))) * duration)/1000
+				max_size = ((0.125 * (0.90 * string_to_catat(get_setting('results.line_speed', '25'), '25'))) * duration)/1000
 			elif self.filter_size_method == 2:
-				max_size = string_to_float(get_setting('flolight.results.%s_size_max' % self.media_type, '10000'), '10000') / 1000
+				max_size = string_to_catat(get_setting('catlight.results.%s_size_max' % self.media_type, '10000'), '10000') / 1000
 			results = [i for i in results if i['scrape_provider'] == 'folders' or min_size <= i['size'] <= max_size]
 		results += folder_results
 		return results
@@ -210,7 +210,7 @@ class Sources():
 	def special_filter(self, results, file_type):
 		enable_setting, key = settings.filter_status(file_type), self.filter_keys[file_type]
 		if key == 'HEVC' and enable_setting == 0:
-			hevc_max_quality = self._get_quality_rank(get_setting('flolight.filter.hevc.%s' % ('max_autoplay_quality' if self.autoplay else 'max_quality'), '4K'))
+			hevc_max_quality = self._get_quality_rank(get_setting('catlight.filter.hevc.%s' % ('max_autoplay_quality' if self.autoplay else 'max_quality'), '4K'))
 			results = [i for i in results if not key in i['extraInfo'] or i['quality_rank'] >= hevc_max_quality]
 		if enable_setting == 1:
 			if key in ('D/VISION', 'HDR'):
@@ -336,7 +336,7 @@ class Sources():
 		current_list.extend(self.folder_sources())
 
 	def get_folderscraper_info(self):
-		folder_info = [(get_setting('flolight.%s.display_name' % i), i, settings.source_folders_directory(self.media_type, i))
+		folder_info = [(get_setting('catlight.%s.display_name' % i), i, settings.source_folders_directory(self.media_type, i))
 						for i in ('folder1', 'folder2', 'folder3', 'folder4', 'folder5')]
 		return [i for i in folder_info if not i[0] in (None, 'None', '') and i[2]]
 
@@ -350,7 +350,7 @@ class Sources():
 					self._process_internal_results()
 					current_progress = max((time.time() - start_time), 0)
 					line1 = ', '.join(remaining_providers).upper()
-					percent = int((current_progress/float(25))*100)
+					percent = int((current_progress/catat(25))*100)
 					self.progress_dialog.update_scraper(self.sources_sd, self.sources_720p, self.sources_1080p, self.sources_4k, self.sources_total, line1, percent)
 					kodi_utils.sleep(self.sleep_time)
 					if len(remaining_providers) == 0: break
@@ -479,11 +479,11 @@ class Sources():
 
 	def _process_internal_results(self):
 		for i in self.internal_scrapers:
-			win_property = kodi_utils.get_property('flolight.internal_results.%s' % i)
+			win_property = kodi_utils.get_property('catlight.internal_results.%s' % i)
 			if win_property in ('checked', '', None): continue
 			try: sources = json.loads(win_property)
 			except: continue
-			kodi_utils.set_property('flolight.internal_results.%s' % i, 'checked')
+			kodi_utils.set_property('catlight.internal_results.%s' % i, 'checked')
 			self._sources_quality_count(sources)
 	
 	def _sources_quality_count(self, sources):
@@ -545,9 +545,9 @@ class Sources():
 
 	def _clear_properties(self):
 		def_internal = self.default_internal_scrapers
-		for item in def_internal: kodi_utils.clear_property('flolight.internal_results.%s' % item)
+		for item in def_internal: kodi_utils.clear_property('catlight.internal_results.%s' % item)
 		if self.active_folders:
-			for item in self.folder_info: kodi_utils.clear_property('flolight.internal_results.%s' % item[0])
+			for item in self.folder_info: kodi_utils.clear_property('catlight.internal_results.%s' % item[0])
 
 	def _make_progress_dialog(self):
 		self.progress_dialog = create_window(('windows.sources', 'SourcesPlayback'), 'sources_playback.xml', meta=self.meta)
@@ -595,14 +595,14 @@ class Sources():
 		if not debrid_files: return kodi_utils.notification('Error')
 		debrid_files.sort(key=lambda k: k['filename'].lower())
 		if download: return debrid_files, debrid_function
-		list_items = [{'line1': '%.2f GB | %s' % (float(item['size'])/1073741824, clean_file_name(item['filename']).upper())} for item in debrid_files]
+		list_items = [{'line1': '%.2f GB | %s' % (catat(item['size'])/1073741824, clean_file_name(item['filename']).upper())} for item in debrid_files]
 		kwargs = {'items': json.dumps(list_items), 'heading': name, 'enumerate': 'true', 'narrow_window': 'true'}
 		chosen_result = kodi_utils.select_dialog(debrid_files, **kwargs)
 		if chosen_result is None: return None
 		link = self.resolve_internal(debrid_info, chosen_result['link'], '')
 		name = chosen_result['filename']
 		self._kill_progress_dialog()
-		return FloLightPlayer().run(link, 'video')
+		return CatLightPlayer().run(link, 'video')
 
 	def play_file(self, results, source={}):
 		self.playback_successful, self.cancel_all_playback = None, False
@@ -659,7 +659,7 @@ class Sources():
 					url, self.playback_successful, self.cancel_all_playback = None, None, False
 					self.playing_filename = item['name']
 					self.playing_item = item
-					player = FloLightPlayer()
+					player = CatLightPlayer()
 					try:
 						if self.progress_dialog.iscanceled() or monitor.abortRequested(): break
 						url = self.resolve_sources(item)
@@ -694,10 +694,10 @@ class Sources():
 		if action == 'start_over':
 			watched_status.erase_bookmark(self.media_type, self.tmdb_id, self.season, self.episode)
 			return 0.0
-		return float(percent)
+		return catat(percent)
 
 	def get_resume_status(self, percent):
-		if settings.auto_resume(self.media_type, self.autoplay): return float(percent)
+		if settings.auto_resume(self.media_type, self.autoplay): return catat(percent)
 		return self._make_resume_dialog(percent)
 
 	def playback_failed_action(self):
