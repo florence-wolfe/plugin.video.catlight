@@ -65,7 +65,6 @@ class NavigatorCache:
 	{'name': 'Watched', 'mode': 'build_tvshow_list', 'action': 'watched_tvshows', 'iconImage': 'watched_1'},
 	{'name': 'Recently Watched', 'mode': 'build_tvshow_list', 'action': 'recent_watched_tvshows', 'iconImage': 'watched_recent'},
 	{'name': 'In Progress', 'mode': 'build_tvshow_list', 'action': 'in_progress_tvshows', 'iconImage': 'in_progress_tvshow'},
-	{'name': 'Recently Watched (Trakt)', 'mode': 'build_tvshow_list', 'action': 'trakt_tv_recently_watched', 'iconImage': 'watched_recent'},
 	{'name': 'Recently Watched Episodes', 'mode': 'build_recently_watched_episode', 'iconImage': 'watched_recent'},
 	{'name': 'In Progress Episodes', 'mode': 'build_in_progress_episode', 'iconImage': 'player'},
 	{'name': 'Next Episodes', 'mode': 'build_next_episode', 'iconImage': 'next_episodes'}
