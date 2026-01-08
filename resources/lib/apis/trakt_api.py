@@ -245,7 +245,7 @@ def trakt_tv_recently_watched(page_no):
 		data.sort(key=lambda k: k['last_watched_at'], reverse=True)
 		return data
 	string = 'trakt_tv_recently_watched_%s' % page_no
-	params = {'path': 'users/me/watched/shows', 'params': {'extended': 'full', 'limit': 20}, 'pagination': False}
+	params = {'path': 'users/me/watched/shows', 'params': {'extended': 'full', 'limit': 20}, 'with_auth': True, 'pagination': False}
 	return lists_cache_object(_process, string, params)
 
 def trakt_tv_certifications(certification, page_no):
