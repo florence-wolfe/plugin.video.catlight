@@ -248,7 +248,10 @@ def routing(sys):
 			TMDbListAPI().revoke()
 	elif '_cache' in mode:
 		from caches import base_cache
-		if mode == 'clear_cache':
+		if mode == 'clear_navigator_cache':
+			from caches.navigator_cache import clear_cache
+			clear_cache()
+		elif mode == 'clear_cache':
 			base_cache.clear_cache(_get('cache'))
 		elif mode == 'clear_all_cache':
 			base_cache.clear_all_cache()
