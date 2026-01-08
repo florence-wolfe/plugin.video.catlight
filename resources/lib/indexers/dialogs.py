@@ -301,7 +301,7 @@ def widget_refresh_timer_choice(params):
 	choices = [{'name': 'OFF', 'value': '0'}]
 	choices.extend([{'name': 'Every %s Minutes' % i, 'value': str(i)} for i in range(5,25,5)])
 	choices.extend([{'name': 'Every %s Minutes' % i, 'value': str(i)} for i in range(30,65,10)])
-	choices.extend([{'name': 'Every %s Hours' % (catat(i)/60), 'value': str(i)} for i in range(90,720,30)])
+	choices.extend([{'name': 'Every %s Hours' % (float(i)/60), 'value': str(i)} for i in range(90,720,30)])
 	list_items = [{'line1': i['name']} for i in choices]
 	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true'}
 	choice = kodi_utils.select_dialog(choices, **kwargs)
@@ -949,7 +949,7 @@ def media_extra_info_choice(params):
 			append('[B]Status:[/B] %s' % extra_info['status'])
 			append('[B]Premiered:[/B] %s' % meta['premiered'])
 			append('[B]Rating:[/B] %s (%s Votes)' % (str(round(meta['rating'], 1)), meta['votes']))
-			append('[B]Runtime:[/B] %s mins' % int(catat(meta['duration'])/60))
+			append('[B]Runtime:[/B] %s mins' % int(float(meta['duration'])/60))
 			append('[B]Genre/s:[/B] %s' % ', '.join(meta['genre']))
 			append('[B]Budget:[/B] %s' % extra_info['budget'])
 			append('[B]Revenue:[/B] %s' % extra_info['revenue'])
@@ -966,7 +966,7 @@ def media_extra_info_choice(params):
 			append('[B]Status:[/B] %s' % extra_info['status'])
 			append('[B]Premiered:[/B] %s' % meta['premiered'])
 			append('[B]Rating:[/B] %s (%s Votes)' % (str(round(meta['rating'], 1)), meta['votes']))
-			append('[B]Runtime:[/B] %d mins' % int(catat(meta['duration'])/60))
+			append('[B]Runtime:[/B] %d mins' % int(float(meta['duration'])/60))
 			append('[B]Classification:[/B] %s' % meta['mpaa'])
 			append('[B]Genre/s:[/B] %s' % ', '.join(meta['genre']))
 			append('[B]Networks:[/B] %s' % ', '.join(meta['studio']))

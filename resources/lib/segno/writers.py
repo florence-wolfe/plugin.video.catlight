@@ -261,19 +261,19 @@ def write_eps(matrix, matrix_size, out, scale=1, border=None, dark='#000', light
             writemeth(line)
             writemeth('\n')
 
-    def rgb_to_catats(clr):
-        def to_catat(c):
-            if isinstance(c, catat):
+    def rgb_to_floats(clr):
+        def to_float(c):
+            if isinstance(c, float):
                 if not 0.0 <= c <= 1.0:
                     raise ValueError(f'Invalid color "{c}". Not in range 0 .. 1')
                 return c
             return 1 / 255.0 * c if c != 1 else c
 
-        return tuple([to_catat(i) for i in _color_to_rgb(clr)])
+        return tuple([to_float(i) for i in _color_to_rgb(clr)])
 
     width, height, border = _valid_width_height_and_border(matrix_size, scale, border)
     stroke_color_is_black = _color_is_black(dark)
-    stroke_color = dark if stroke_color_is_black else rgb_to_catats(dark)
+    stroke_color = dark if stroke_color_is_black else rgb_to_floats(dark)
     with writable(out, 'wt') as f:
         writeline = partial(write_line, f.write)
         writeline('%!PS-Adobe-3.0 EPSF-3.0')
@@ -284,7 +284,7 @@ def write_eps(matrix, matrix_size, out, scale=1, border=None, dark='#000', light
         writeline('/m { rmoveto } bind def')
         writeline('/l { rlineto } bind def')
         if light is not None:
-            writeline('{0:f} {1:f} {2:f} setrgbcolor clippath fill'.format(*rgb_to_catats(light)))  # noqa UP030
+            writeline('{0:f} {1:f} {2:f} setrgbcolor clippath fill'.format(*rgb_to_floats(light)))  # noqa UP030
             if stroke_color_is_black:
                 writeline('0 0 0 setrgbcolor')
         if not stroke_color_is_black:
@@ -316,7 +316,7 @@ def as_png_data_uri(matrix, matrix_size, scale=1, border=None, compresslevel=9, 
 def write_png(matrix, matrix_size, out, colormap, scale=1, border=None, compresslevel=9, dpi=None):
 
     def png_color(clr):
-        return _color_to_rgb_or_rgba(clr, alpha_catat=False) if clr is not None else transparent
+        return _color_to_rgb_or_rgba(clr, alpha_float=False) if clr is not None else transparent
 
     def chunk(name, data):
         chunk_head = name + data
@@ -426,13 +426,13 @@ def write_pdf(matrix, matrix_size, out, scale=1, border=None, dark='#000',
         writemeth(s.encode('ascii'))
 
     def to_pdf_color(clr):
-        def to_catat(c):
-            if isinstance(c, catat):
+        def to_float(c):
+            if isinstance(c, float):
                 if not 0.0 <= c <= 1.0:
                     raise ValueError(f'Invalid color "{c}". Not in range 0 .. 1')
                 return c
             return 1 / 255.0 * c if c != 1 else c
-        return tuple([to_catat(i) for i in _color_to_rgb(clr)])
+        return tuple([to_float(i) for i in _color_to_rgb(clr)])
 
     width, height, border = _valid_width_height_and_border(matrix_size, scale, border)
     creation_date = f"{time.strftime('%Y%m%d%H%M%S')}{(time.timezone // 3600):+03d}'{(abs(time.timezone) % 60):02d}'"
@@ -525,8 +525,8 @@ def write_pam(matrix, matrix_size, out, scale=1, border=None, dark='#000', light
     row_iter = matrix_iter(matrix, matrix_size, scale, border)
     depth, maxval, tuple_type = 1, 1, 'BLACKANDWHITE'
     transparency = False
-    stroke_color = _color_to_rgb_or_rgba(dark, alpha_catat=False)
-    bg_color = _color_to_rgb_or_rgba(light, alpha_catat=False) if light is not None else None
+    stroke_color = _color_to_rgb_or_rgba(dark, alpha_float=False)
+    bg_color = _color_to_rgb_or_rgba(light, alpha_float=False) if light is not None else None
     colored_stroke = not (_color_is_black(stroke_color) or _color_is_white(stroke_color))
     if bg_color is None:
         tuple_type = 'GRAYSCALE_ALPHA' if not colored_stroke else 'RGB_ALPHA'
@@ -713,8 +713,8 @@ def write_terminal_compact(matrix, matrix_size, out, border=None):
             write('\n')
 
 
-def _color_to_rgb_or_rgba(color, alpha_catat=True):
-    rgba = _color_to_rgba(color, alpha_catat=alpha_catat)
+def _color_to_rgb_or_rgba(color, alpha_float=True):
+    rgba = _color_to_rgba(color, alpha_float=alpha_float)
     if rgba[3] in (1.0, 255):
         return rgba[:3]
     return rgba
@@ -773,9 +773,9 @@ def _color_to_rgb(color):
     return rgb
 
 
-def _color_to_rgba(color, alpha_catat=True):
+def _color_to_rgba(color, alpha_float=True):
     res = []
-    alpha_channel = (1.0,) if alpha_catat else (255,)
+    alpha_channel = (1.0,) if alpha_float else (255,)
     if isinstance(color, tuple):
         col_length = len(color)
         is_valid = False
@@ -787,7 +787,7 @@ def _color_to_rgba(color, alpha_catat=True):
                     break
             if is_valid:
                 if col_length == 4:
-                    res.append(_alpha_value(color[3], alpha_catat))
+                    res.append(_alpha_value(color[3], alpha_float))
                 else:
                     res.append(alpha_channel[0])
         if is_valid:
@@ -797,7 +797,7 @@ def _color_to_rgba(color, alpha_catat=True):
         return _NAME2RGB[color.lower()] + alpha_channel
     except KeyError:
         try:
-            clr = _hex_to_rgb_or_rgba(color, alpha_catat=alpha_catat)
+            clr = _hex_to_rgb_or_rgba(color, alpha_float=alpha_float)
             if len(clr) == 4:
                 return clr
             else:
@@ -807,7 +807,7 @@ def _color_to_rgba(color, alpha_catat=True):
                              'color name nor a color in hexadecimal format.')
 
 
-def _hex_to_rgb_or_rgba(color, alpha_catat=True):
+def _hex_to_rgb_or_rgba(color, alpha_float=True):
     if color[0] == '#':
         color = color[1:]
     if 2 < len(color) < 5:
@@ -817,24 +817,24 @@ def _hex_to_rgb_or_rgba(color, alpha_catat=True):
     if color_len not in (6, 8):
         raise ValueError(f'Input #{color} is not in #RRGGBB nor in #RRGGBBAA format')
     res = tuple([int(color[i:i + 2], 16) for i in range(0, color_len, 2)])
-    if alpha_catat and color_len == 8:
-        res = res[:3] + (_alpha_value(res[3], alpha_catat),)
+    if alpha_float and color_len == 8:
+        res = res[:3] + (_alpha_value(res[3], alpha_float),)
     return res
 
 
 _ALPHA_COMMONS = {255: 1.0, 128: .5, 64: .25, 32: .125, 16: .625, 0: 0.0}
 
 
-def _alpha_value(color, alpha_catat):
-    if alpha_catat:
-        if not isinstance(color, catat):
+def _alpha_value(color, alpha_float):
+    if alpha_float:
+        if not isinstance(color, float):
             if 0 <= color <= 255:
-                return _ALPHA_COMMONS.get(color, catat('%.02f' % (color / 255.0)))
+                return _ALPHA_COMMONS.get(color, float('%.02f' % (color / 255.0)))
         else:
             if 0 <= color <= 1.0:
                 return color
     else:
-        if not isinstance(color, catat):
+        if not isinstance(color, float):
             if 0 <= color <= 255:
                 return color
         else:

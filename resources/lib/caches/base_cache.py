@@ -162,7 +162,7 @@ def clean_databases():
 		end_bytes = get_size(location)
 		saved_bytes = start_bytes - end_bytes
 		append('[B]%s: [COLOR green]SUCCESS[/COLOR][/B][CR]    [B]Saved Size: %sMB[/B][CR]    Start Size/End Size: %sMB/%sMB' \
-		% (name, round(catat(saved_bytes)/1024/1024, 2), round(catat(start_bytes)/1024/1024, 2), round(catat(end_bytes)/1024/1024, 2)))
+		% (name, round(float(saved_bytes)/1024/1024, 2), round(float(start_bytes)/1024/1024, 2), round(float(end_bytes)/1024/1024, 2)))
 	return kodi_utils.show_text('Cache Clean Results', text='[CR]----------------------------------[CR]'.join(results), font_size='large')
 
 def clear_cache(cache_type, silent=False):
@@ -244,7 +244,7 @@ def clear_all_cache():
 			('oc_cloud', 'OffCloud Cloud'), ('ed_cloud', 'Easy Debrid Cloud'), ('tb_cloud', 'TorBox Cloud'))
 	for count, cache_type in enumerate(caches, 1):
 		try:
-			progressDialog.update(line % (cache_type[1]), int(catat(count) / catat(len(caches)) * 100))
+			progressDialog.update(line % (cache_type[1]), int(float(count) / float(len(caches)) * 100))
 			clear_cache(cache_type[0], silent=True)
 			kodi_utils.sleep(1000)
 		except: pass

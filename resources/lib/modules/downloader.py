@@ -66,7 +66,7 @@ def download_threads_manager(multi_downloads, image):
 	kodi_utils.clear_property('catlight.active_queued_downloads')
 
 def select_pack_item(pack_choices, icon):
-	list_items = [{'line1': '%.2f GB | %s' % (catat(item['pack_files']['size'])/1073741824, clean_file_name(item['pack_files']['filename']).upper()), 'icon': icon} \
+	list_items = [{'line1': '%.2f GB | %s' % (float(item['pack_files']['size'])/1073741824, clean_file_name(item['pack_files']['filename']).upper()), 'icon': icon} \
 				for item in pack_choices]
 	heading = 'Choose Files to Download - %s' % clean_file_name(json.loads(pack_choices[0].get('source')).get('name'))
 	kwargs = {'items': json.dumps(list_items), 'heading': heading, 'enumerate': 'true', 'multi_choice': 'true'}
@@ -289,7 +289,7 @@ class Downloader:
 		while True:
 			downloaded = total
 			for c in chunks: downloaded += len(c)
-			percent = min(round(catat(downloaded)*100 / self.content), 100)
+			percent = min(round(float(downloaded)*100 / self.content), 100)
 			if monitor_progress:
 				status = self.check_status()
 				if status == 'paused':

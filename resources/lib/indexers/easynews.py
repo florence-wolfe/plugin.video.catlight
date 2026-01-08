@@ -39,7 +39,7 @@ def easynews_file_browser(files, handle):
 				name = clean_file_name(item_get('name')).upper()
 				url_dl = item_get('url_dl')
 				down_url = item_get('down_url', url_dl)
-				size = str(round(catat(int(item_get('rawSize')))/1048576000, 1))
+				size = str(round(float(int(item_get('rawSize')))/1048576000, 1))
 				length = item_get('runtime', '0')
 				display = '%02d | [B]%s[/B] | [B]%sGB | %sMINS | [/B][I]%s [/I]' % (count, display_res, size, length, name)
 				url_params = {'mode': 'easynews.resolve_easynews', 'action': 'cloud.easynews_direct', 'name': name, 'url': down_url,

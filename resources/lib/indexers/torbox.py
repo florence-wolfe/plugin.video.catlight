@@ -41,7 +41,7 @@ def browse_tb_cloud(folder_id, media_type):
 			try:
 				cm = []
 				name = clean_file_name(item['short_name']).upper()
-				size = catat(int(item['size']))/1073741824
+				size = float(int(item['size']))/1073741824
 				display = '%02d | [B]FILE[/B] | %.2f GB | [I]%s [/I]' % (count, size, name)
 				url_link = '%d,%d' % (int(folder_id), item['id'])
 				url_params = {'mode': 'torbox.resolve_tb', 'play': 'true', 'url': url_link, 'media_type': item['media_type']}

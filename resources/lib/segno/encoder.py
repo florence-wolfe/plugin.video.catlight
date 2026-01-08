@@ -543,7 +543,7 @@ def mask_scores(matrix, width, height):
         if n1_col_counter >= 5:
             score_n1 += n1_col_counter - 2
     # N4
-    percent = catat(dark_module_counter) / (qr_size ** 2)
+    percent = float(dark_module_counter) / (qr_size ** 2)
     score_n4 = 10 * int(abs(percent * 100 - 50) / 5)  # N4 = 10
     return score_n1, score_n2, score_n3, score_n4
 

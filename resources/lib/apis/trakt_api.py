@@ -33,7 +33,7 @@ def call_trakt(path, params={}, data=None, is_delete=False, with_auth=True, meth
 			while kodi_utils.get_property('catlight.trakt_refreshing_token') == 'true':
 				kodi_utils.logger('refreshing trakt token', '')
 				kodi_utils.sleep(250)
-			try: expires_at = catat(get_setting('catlight.trakt.expires'))
+			try: expires_at = float(get_setting('catlight.trakt.expires'))
 			except: expires_at = 0.0
 			if time.time() > expires_at: trakt_refresh_token()
 			token = get_setting('catlight.trakt.token')
@@ -328,8 +328,8 @@ def trakt_progress(action, media, media_id, percent, season=None, episode=None, 
 		result = call_trakt(url, is_delete=True)
 	else:
 		url = 'scrobble/pause'
-		if media in ('movie', 'movies'): data = {'movie': {'ids': {'tmdb': media_id}}, 'progress': catat(percent)}
-		else: data = {'show': {'ids': {'tmdb': media_id}}, 'episode': {'season': int(season), 'number': int(episode)}, 'progress': catat(percent)}
+		if media in ('movie', 'movies'): data = {'movie': {'ids': {'tmdb': media_id}}, 'progress': float(percent)}
+		else: data = {'show': {'ids': {'tmdb': media_id}}, 'episode': {'season': int(season), 'number': int(episode)}, 'progress': float(percent)}
 		call_trakt(url, data=data)
 	if refresh_trakt: trakt_sync_activities()
 
@@ -769,7 +769,7 @@ def trakt_sync_activities(force_update=False):
 	def refresh_token_check():
 		current_time = time.time()
 		sync_interval = int(get_setting('catlight.trakt.sync_interval', '60')) * 60
-		try: expires_at = catat(get_setting('catlight.trakt.expires'))
+		try: expires_at = float(get_setting('catlight.trakt.expires'))
 		except: expires_at = 0.0
 		if current_time + sync_interval >= expires_at: return True
 	def clear_properties(media_type):

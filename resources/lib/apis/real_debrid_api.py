@@ -50,7 +50,7 @@ class RealDebridAPI:
 			except: continue
 			if 'error' in response:
 				time_passed = time.time() - start
-				progress = int(100 * time_passed/catat(expires_in))
+				progress = int(100 * time_passed/float(expires_in))
 				progressDialog.update(content, progress)
 				continue
 			try:

@@ -124,7 +124,7 @@ def get_bookmarks_movie(watched_db=None):
 	return info
 
 def get_progress_status_movie(progress_info, media_id):
-	try: percent = str(round(catat(progress_info[media_id]['resume_point'])))
+	try: percent = str(round(float(progress_info[media_id]['resume_point'])))
 	except: percent = None
 	return percent
 
@@ -147,7 +147,7 @@ def get_watched_status_tvshow(watched_info, aired_eps):
 	except: return 0, 0, aired_eps
 
 def get_progress_status_tvshow(watched, aired_eps):
-	try: progress = int((catat(watched)/aired_eps)*100) or 1
+	try: progress = int((float(watched)/aired_eps)*100) or 1
 	except: progress = 1
 	return progress
 
@@ -169,7 +169,7 @@ def get_watched_status_season(watched_info, aired_eps):
 	except: return 0, 0, aired_eps
 
 def get_progress_status_season(watched, aired_eps):
-	try: progress = int((catat(watched)/aired_eps)*100)
+	try: progress = int((float(watched)/aired_eps)*100)
 	except: progress = 0
 	return progress
 
@@ -203,17 +203,17 @@ def get_bookmarks_all_episode(media_id, total_seasons, watched_db=None):
 	return all_seasons_info
 
 def get_progress_status_episode(progress_info, episode):
-	try: percent = str(round(catat(progress_info[episode]['resume_point'])))
+	try: percent = str(round(float(progress_info[episode]['resume_point'])))
 	except: percent = None
 	return percent
 
 def get_progress_status_all_episode(progress_info, season, episode):
-	try: percent = str(round(catat(progress_info[season][episode]['resume_point'])))
+	try: percent = str(round(float(progress_info[season][episode]['resume_point'])))
 	except: percent = None
 	return percent
 
 def get_resume_seconds(progress, duration):
-	return catat(int(catat(progress)/100 * duration))
+	return float(int(float(progress)/100 * duration))
 
 def clear_local_bookmarks():
 	try:
@@ -260,8 +260,8 @@ def set_bookmark(params):
 		media_type, tmdb_id, curr_time, total_time = params.get('media_type'), params.get('tmdb_id'), params.get('curr_time'), params.get('total_time')
 		refresh = False if params.get('from_playback', 'false') == 'true' else True
 		title, season, episode = params.get('title'), params.get('season'), params.get('episode')
-		adjusted_current_time = catat(curr_time) - 5
-		resume_point = round(adjusted_current_time/catat(total_time)*100,1)
+		adjusted_current_time = float(curr_time) - 5
+		resume_point = round(adjusted_current_time/float(total_time)*100,1)
 		watched_indicators = settings.watched_indicators()
 		if watched_indicators == 1:
 			if trakt_official_status(media_type) == False: return
@@ -313,7 +313,7 @@ def mark_tvshow(params):
 			season_number = ep['season']
 			ep_number = ep['episode']
 			display = '%s - S%.2dE%.2d' % (title, int(season_number), int(ep_number))
-			progress_backround.update(int(catat(count)/catat(total)*100), '[B]Please Wait..[/B]', display)
+			progress_backround.update(int(float(count)/float(total)*100), '[B]Please Wait..[/B]', display)
 			episode_date, premiered = adjust_premiered_date(ep['premiered'], settings.date_offset())
 			if episode_date and current_date < episode_date: continue
 			insert_append(make_batch_insert(action, 'episode', tmdb_id, season_number, ep_number, last_played, title))
@@ -346,7 +346,7 @@ def mark_season(params):
 		display = '%s - S%.2dE%.2d' % (title, season_number, ep_number)
 		episode_date, premiered = adjust_premiered_date(item['premiered'], settings.date_offset())
 		if episode_date and current_date < episode_date: continue
-		progress_backround.update(int(catat(count) / catat(len(ep_data)) * 100), '[B]Please Wait..[/B]', display)
+		progress_backround.update(int(float(count) / float(len(ep_data)) * 100), '[B]Please Wait..[/B]', display)
 		insert_append(make_batch_insert(action, 'episode', tmdb_id, season_number, ep_number, last_played, title))
 	batch_watched_status_mark(watched_indicators, insert_list, action)
 	progress_backround.close()
@@ -461,7 +461,7 @@ def get_in_progress_tvshows(dummy_arg, page_no):
 def get_in_progress_episodes():
 	dbcon = get_database()
 	data = dbcon.execute('SELECT media_id, season, episode, resume_point, last_played, title FROM progress WHERE db_type = ?', ('episode',)).fetchall()
-	episode_list = [{'media_ids': {'tmdb': i[0]}, 'season': int(i[1]), 'episode': int(i[2]), 'resume_point': catat(i[3]), 'date': i[4], 'title': i[5]} for i in data]
+	episode_list = [{'media_ids': {'tmdb': i[0]}, 'season': int(i[1]), 'episode': int(i[2]), 'resume_point': float(i[3]), 'date': i[4], 'title': i[5]} for i in data]
 	if settings.lists_sort_order('progress') == 0: episode_list = sort_for_article(episode_list, 'title', settings.ignore_articles())
 	else: episode_list.sort(key=lambda k: k['date'], reverse=True)
 	return episode_list

@@ -65,7 +65,7 @@ class source:
 					alive_threads = [x.getName() for x in self.threads if x.is_alive()]
 					if self.internal_activated or self.internal_prescraped: alive_threads.extend(self.process_internal_results())
 					line1 =  ', '.join(alive_threads).upper()
-					percent = (max((time.time() - start_time), 0)/catat(self.timeout))*100
+					percent = (max((time.time() - start_time), 0)/float(self.timeout))*100
 					self.progress_dialog.update_scraper(self.sources_sd, self.sources_720p, self.sources_1080p, self.sources_4k, self.sources_total, line1, percent)
 					if self.threads_completed:
 						len_alive_threads = len(alive_threads)
@@ -195,7 +195,7 @@ class source:
 					remaining_debrids = [x.getName() for x in debrid_check_threads if x.is_alive() is True]
 					current_progress = max((time.time() - start_time), 0)
 					line1 = ', '.join(remaining_debrids).upper()
-					percent = int((current_progress/catat(timeout))*100)
+					percent = int((current_progress/float(timeout))*100)
 					self.progress_dialog.update_scraper(self.final_sd, self.final_720p, self.final_1080p, self.final_4k, self.final_total, line1, percent)
 					kodi_utils.sleep(100)
 					if len(remaining_debrids) == 0: break
@@ -231,7 +231,7 @@ class source:
 						if 'package' in i and provider not in ('torrentio', 'comet', 'knightcrawler', 'mediafusion', 'selfhosted'):
 							if i_get('package') == 'season': divider = self.season_divider
 							else: divider = self.show_divider
-							size = catat(size) / divider
+							size = float(size) / divider
 						size_label = '%.2f GB' % size
 					except: pass
 					i.update({'provider': provider, 'display_name': display_name, 'external': True, 'scrape_provider': self.scrape_provider, 'extraInfo': extraInfo,

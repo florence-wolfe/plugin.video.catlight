@@ -30,7 +30,7 @@ class source:
 						file_name = self._get_filename(item['path'])
 						if filter_title and not source_utils.check_title(title, file_name, aliases, self.year, self.season, self.episode): continue
 						display_name = clean_file_name(file_name).replace('html', ' ').replace('+', ' ').replace('-', ' ')
-						file_dl, size = item['url_link'], round(catat(item['bytes'])/1073741824, 2)
+						file_dl, size = item['url_link'], round(float(item['bytes'])/1073741824, 2)
 						video_quality, details = source_utils.get_file_info(name_info=source_utils.release_info_format(file_name))
 						direct_debrid_link = item.get('direct_debrid_link', False)
 						folder_id, cache_type = item.get('folder_id', ''), item.get('cache_type', '')

@@ -426,7 +426,7 @@ def volume_checker():
 		if get_property('catlight.playback.volumecheck_enabled') == 'false' or get_visibility('Player.Muted'): return
 		from modules.utils import string_alphanum_to_num
 		max_volume = min(int(get_property('catlight.playback.volumecheck_percent') or '50'), 100)
-		if int(100 - (catat(string_alphanum_to_num(get_infolabel('Player.Volume').split('.')[0]))/60)*100) > max_volume: execute_builtin('SetVolume(%d)' % max_volume)
+		if int(100 - (float(string_alphanum_to_num(get_infolabel('Player.Volume').split('.')[0]))/60)*100) > max_volume: execute_builtin('SetVolume(%d)' % max_volume)
 	except: pass
 
 def focus_index(index):

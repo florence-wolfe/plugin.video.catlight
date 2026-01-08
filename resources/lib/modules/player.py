@@ -85,7 +85,7 @@ class CatLightPlayer(xbmc.Player):
 					ku.sleep(1000)
 					try: self.total_time, self.curr_time = self.getTotalTime(), self.getTime()
 					except: ku.sleep(250); continue
-					self.current_point = round(catat(self.curr_time/self.total_time * 100), 1)
+					self.current_point = round(float(self.curr_time/self.total_time * 100), 1)
 					if self.current_point >= 90:
 						if play_random_continual: self.run_random_continual(); break
 						if not self.media_marked: self.media_watched_marker()
@@ -214,7 +214,7 @@ class CatLightPlayer(xbmc.Player):
 
 	def final_chapter(self, threshhold):
 		try:
-			final_chapter = catat(ku.get_infolabel('Player.Chapters').split(',')[-1])
+			final_chapter = float(ku.get_infolabel('Player.Chapters').split(',')[-1])
 			if final_chapter >= threshhold: return final_chapter
 		except: pass
 		return None

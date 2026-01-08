@@ -9,7 +9,7 @@ from scrapers import external, folders
 from modules import debrid, kodi_utils, settings, metadata, watched_status
 from modules.player import CatLightPlayer
 from modules.source_utils import get_cache_expiry, make_alias_dict, include_exclude_filters
-from modules.utils import clean_file_name, string_to_catat, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import
+from modules.utils import clean_file_name, string_to_float, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import
 # logger = kodi_utils.logger
 
 class Sources():
@@ -192,13 +192,13 @@ class Sources():
 		else: folder_results = []
 		results = [i for i in results if i['quality'] in self.quality_filter]
 		if self.filter_size_method:
-			min_size = string_to_catat(get_setting('catlight.results.%s_size_min' % self.media_type, '0'), '0') / 1000
+			min_size = string_to_float(get_setting('catlight.results.%s_size_min' % self.media_type, '0'), '0') / 1000
 			if min_size == 0.0 and not self.include_unknown_size: min_size = 0.02
 			if self.filter_size_method == 1:
 				duration = self.meta['duration'] or (5400 if self.media_type == 'movie' else 2400)
-				max_size = ((0.125 * (0.90 * string_to_catat(get_setting('results.line_speed', '25'), '25'))) * duration)/1000
+				max_size = ((0.125 * (0.90 * string_to_float(get_setting('results.line_speed', '25'), '25'))) * duration)/1000
 			elif self.filter_size_method == 2:
-				max_size = string_to_catat(get_setting('catlight.results.%s_size_max' % self.media_type, '10000'), '10000') / 1000
+				max_size = string_to_float(get_setting('catlight.results.%s_size_max' % self.media_type, '10000'), '10000') / 1000
 			results = [i for i in results if i['scrape_provider'] == 'folders' or min_size <= i['size'] <= max_size]
 		results += folder_results
 		return results
@@ -350,7 +350,7 @@ class Sources():
 					self._process_internal_results()
 					current_progress = max((time.time() - start_time), 0)
 					line1 = ', '.join(remaining_providers).upper()
-					percent = int((current_progress/catat(25))*100)
+					percent = int((current_progress/float(25))*100)
 					self.progress_dialog.update_scraper(self.sources_sd, self.sources_720p, self.sources_1080p, self.sources_4k, self.sources_total, line1, percent)
 					kodi_utils.sleep(self.sleep_time)
 					if len(remaining_providers) == 0: break
@@ -595,7 +595,7 @@ class Sources():
 		if not debrid_files: return kodi_utils.notification('Error')
 		debrid_files.sort(key=lambda k: k['filename'].lower())
 		if download: return debrid_files, debrid_function
-		list_items = [{'line1': '%.2f GB | %s' % (catat(item['size'])/1073741824, clean_file_name(item['filename']).upper())} for item in debrid_files]
+		list_items = [{'line1': '%.2f GB | %s' % (float(item['size'])/1073741824, clean_file_name(item['filename']).upper())} for item in debrid_files]
 		kwargs = {'items': json.dumps(list_items), 'heading': name, 'enumerate': 'true', 'narrow_window': 'true'}
 		chosen_result = kodi_utils.select_dialog(debrid_files, **kwargs)
 		if chosen_result is None: return None
@@ -694,10 +694,10 @@ class Sources():
 		if action == 'start_over':
 			watched_status.erase_bookmark(self.media_type, self.tmdb_id, self.season, self.episode)
 			return 0.0
-		return catat(percent)
+		return float(percent)
 
 	def get_resume_status(self, percent):
-		if settings.auto_resume(self.media_type, self.autoplay): return catat(percent)
+		if settings.auto_resume(self.media_type, self.autoplay): return float(percent)
 		return self._make_resume_dialog(percent)
 
 	def playback_failed_action(self):

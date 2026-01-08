@@ -449,7 +449,7 @@ class ExternalImport:
 			meta = function(id_type, original_id, self.api_key, self.mpaa, self.current_time, self.current_timestamp)
 			title, media_id, release_date, date_added = meta['title'], meta['tmdb_id'], meta['premiered'], self.current_timestamp + order
 			self.results_append({'media_id': str(media_id), 'title': title, 'type': m_type, 'release_date': release_date, 'date_added': str(date_added), 'order': order})
-			if self.progressDialog: self.progressDialog.update(meta['title'], int(catat(len(self.results)) / catat(self.total_items) * 100), meta['poster'])
+			if self.progressDialog: self.progressDialog.update(meta['title'], int(float(len(self.results)) / float(self.total_items) * 100), meta['poster'])
 		except: pass
 	
 	def run(self):
