@@ -825,7 +825,7 @@ def default_settings():
         {
             "setting_id": "tmdb_api",
             "setting_type": "string",
-            "setting_default": "b370b60447737762ca38457bd77579b3",
+            "setting_default": "6476314027d7cf61182fc6613f947b20",
         },
         # ==================== TMDb Lists
         {
