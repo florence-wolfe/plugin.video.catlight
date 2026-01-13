@@ -814,12 +814,12 @@ def default_settings():
         {
             "setting_id": "trakt.client",
             "setting_type": "string",
-            "setting_default": "1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb",
+            "setting_default": "9f412471708d6991a60fc6dd9bab4a1eeaa14a3a8af2991fc2af7732838da0b4",
         },
         {
             "setting_id": "trakt.secret",
             "setting_type": "string",
-            "setting_default": "8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1",
+            "setting_default": "5c59277f60aa08847bb918f15fdc32b3872e5af464e959628b95576ab30d4d25",
         },
         # ==================== TMDb API
         {
