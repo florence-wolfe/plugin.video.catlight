@@ -27,9 +27,9 @@ def build_season_list(params):
 				try: year = air_date.split('-')[0]
 				except: year = show_year or '2050'
 				plot = overview or show_plot
-				try: premiered = adjust_premiered_date(air_date, adjust_hours)[1]
-				except: premiered = ''
-				unaired = aired_eps == 0
+				try: season_date, premiered = adjust_premiered_date(air_date, adjust_hours)
+				except: season_date, premiered = None, ''
+				unaired = aired_eps == 0 or (season_date and current_date < season_date)
 				if unaired or season_special:
 					progress, playcount, total_watched, total_unwatched = 0, 0, 0, aired_eps
 					if unaired: title = '[COLOR red][I]%s[/I][/COLOR]' % title
