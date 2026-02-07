@@ -297,11 +297,6 @@ class Movies:
                 unaired = True
             else:
                 unaired = False
-            display_premiered = premiered
-            if unaired:
-                if premiered:
-                    display_premiered = "[COLOR red]%s[/COLOR]" % premiered
-                set_properties({"catlight.unaired": "true"})
             progress = watched_status.get_progress_status_movie(
                 self.bookmarks, str_tmdb_id
             )
@@ -648,7 +643,7 @@ class Movies:
             (
                 info_tag.setUniqueIDs({"imdb": imdb_id, "tmdb": str_tmdb_id}),
                 info_tag.setIMDBNumber(imdb_id),
-                info_tag.setPremiered(display_premiered),
+                info_tag.setPremiered(premiered),
             )
             (
                 info_tag.setYear(int(year)),
