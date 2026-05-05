@@ -1,5 +1,5 @@
 
-With Cat Light, you can assign a button on your remote/keyboard, via Kodi's keymap, to enact a context menu item from Cat Light automatically.
+With CatLight, you can assign a button on your remote/keyboard, via Kodi's keymap, to enact a context menu item from CatLight automatically.
 
 Your choices for the mode parameter are:
 

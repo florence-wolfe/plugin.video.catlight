@@ -102,7 +102,7 @@ def pm_transfers():
 	kodi_utils.set_view_mode('view.premium')
 
 def pm_rename(file_type, file_id, current_name):
-	new_name = kodi_utils.kodi_dialog().input('Cat', defaultt=current_name)
+	new_name = kodi_utils.kodi_dialog().input('CatLight', defaultt=current_name)
 	if not new_name: return
 	result = Premiumize.rename_cache_item(file_type, file_id, new_name)
 	if result == 'success':
@@ -127,7 +127,7 @@ def pm_account_info():
 		customer_id = account_info['customer_id']
 		expires = datetime.fromtimestamp(account_info['premium_until'])
 		days_remaining = (expires - datetime.today()).days
-		points_used = int(math.cator(float(account_info['space_used']) / 1073741824.0))
+		points_used = int(math.floor(float(account_info['space_used']) / 1073741824.0))
 		space_used = float(int(account_info['space_used']))/1073741824
 		percentage_used = str(round(float(account_info['limit_used']) * 100.0, 1))
 		body = []

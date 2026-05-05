@@ -63,10 +63,9 @@ class NavigatorCache:
 	{'name': 'Certifications', 'mode': 'navigator.certifications', 'menu_type': 'tvshow', 'random_support': 'true', 'iconImage': 'certifications'},
 	{'name': 'Because You Watched...', 'mode': 'navigator.because_you_watched', 'menu_type': 'tvshow', 'iconImage': 'because_you_watched'},
 	{'name': 'Watched', 'mode': 'build_tvshow_list', 'action': 'watched_tvshows', 'iconImage': 'watched_1'},
-	{'name': 'Recently Watched', 'mode': 'build_tvshow_list', 'action': 'recent_watched_tvshows', 'iconImage': 'watched_recent', 'content_type': 'tv'},
-	{'name': 'Recently Watched (All)', 'mode': 'build_tvshow_list', 'action': 'recent_watched_tvshows', 'iconImage': 'watched_recent', 'content_type': 'all'},
-	{'name': 'Recently Watched Episodes', 'mode': 'build_recently_watched_episode', 'iconImage': 'watched_recent'},
+	{'name': 'Recently Watched', 'mode': 'build_tvshow_list', 'action': 'recent_watched_tvshows', 'iconImage': 'watched_recent'},
 	{'name': 'In Progress', 'mode': 'build_tvshow_list', 'action': 'in_progress_tvshows', 'iconImage': 'in_progress_tvshow'},
+	{'name': 'Recently Watched Episodes', 'mode': 'build_recently_watched_episode', 'iconImage': 'watched_recent'},
 	{'name': 'In Progress Episodes', 'mode': 'build_in_progress_episode', 'iconImage': 'player'},
 	{'name': 'Next Episodes', 'mode': 'build_next_episode', 'iconImage': 'next_episodes'}
 				]
@@ -86,7 +85,7 @@ class NavigatorCache:
 	{'name': 'Anime Decades', 'mode': 'navigator.decades', 'menu_type': 'anime', 'random_support': 'true', 'iconImage': 'calendar_decades'},
 	{'name': 'Anime Certifications', 'mode': 'navigator.certifications', 'menu_type': 'anime', 'random_support': 'true', 'iconImage': 'certifications'},
 	{'name': 'Anime Watched', 'mode': 'build_tvshow_list', 'action': 'watched_tvshows', 'is_anime_list': 'true', 'iconImage': 'watched_1'},
-	{'name': 'Anime Recently Watched', 'mode': 'build_tvshow_list', 'action': 'recent_watched_tvshows', 'content_type': 'anime', 'iconImage': 'watched_recent'},
+	{'name': 'Anime Recently Watched', 'mode': 'build_tvshow_list', 'action': 'recent_watched_tvshows', 'is_anime_list': 'true', 'iconImage': 'watched_recent'},
 	{'name': 'Anime In Progress', 'mode': 'build_tvshow_list', 'action': 'in_progress_tvshows', 'is_anime_list': 'true', 'iconImage': 'in_progress_tvshow'},
 	{'name': 'Anime Recently Watched Episodes', 'mode': 'build_recently_watched_episode', 'is_anime_list': 'true', 'iconImage': 'watched_recent'},
 	{'name': 'Anime In Progress Episodes', 'mode': 'build_in_progress_episode', 'is_anime_list': 'true', 'iconImage': 'player'},
@@ -200,8 +199,16 @@ class NavigatorCache:
 	
 	def random_tmdb_lists(self):
 		return [
-			{'mode': 'tmdblist.get_tmdb_lists', 'name': 'Random Shuffled TMDb Lists (All)', 'iconImage': 'tmdb', 'random': 'true', 'shuffle': 'true'},
-			{'mode': 'random.build_tmdb_lists', 'name': 'Random TMDb Lists (Single)', 'iconImage': 'tmdb', 'random': 'true'}
+			{'mode': 'random.build_tmdb_lists_contents', 'list_id': 'watchlist', 'media_type': 'movie', 'name': 'Random TMDb Movie Watchlist', 'iconImage': 'tmdb', 'random': 'true'},
+			{'mode': 'random.build_tmdb_lists_contents', 'list_id': 'watchlist', 'media_type': 'tv', 'name': 'Random TMDb TV Show Watchlist', 'iconImage': 'tmdb', 'random': 'true'},
+			{'mode': 'random.build_tmdb_lists_contents', 'list_id': 'favorites', 'media_type': 'movie', 'name': 'Random TMDb Movie Favorites', 'iconImage': 'tmdb', 'random': 'true'},
+			{'mode': 'random.build_tmdb_lists_contents', 'list_id': 'favorites', 'media_type': 'tv', 'name': 'Random TMDb TV Show Favorites', 'iconImage': 'tmdb', 'random': 'true'},
+			{'mode': 'random.build_tmdb_lists_contents', 'list_id': 'recommendations', 'media_type': 'movie', 'name': 'Random TMDb Movie Recommendations',
+			'iconImage': 'tmdb', 'random': 'true'},
+			{'mode': 'random.build_tmdb_lists_contents', 'list_id': 'recommendations', 'media_type': 'tv', 'name': 'Random TMDb TV Show Recommendations',
+			'iconImage': 'tmdb', 'random': 'true'},
+			{'mode': 'tmdblist.get_tmdb_lists', 'name': 'Random Shuffled TMDb My Lists (All)', 'iconImage': 'tmdb', 'random': 'true', 'shuffle': 'true'},
+			{'mode': 'random.build_tmdb_lists', 'name': 'Random TMDb My Lists (Single)', 'iconImage': 'tmdb', 'random': 'true'}
 				]
 	
 	def random_personal_lists(self):
@@ -241,6 +248,3 @@ class NavigatorCache:
 				]
 
 navigator_cache = NavigatorCache()
-
-def clear_cache():
-	navigator_cache.rebuild_database()

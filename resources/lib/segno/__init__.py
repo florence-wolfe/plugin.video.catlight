@@ -12,13 +12,13 @@ QR Code and Micro QR Code implementation.
 import sys
 import io
 from segno import encoder
-from segno.encoder import DataOvercatwError
+from segno.encoder import DataOverflowError
 from segno import writers, utils
 
 __version__ = '1.6.6'
 
 __all__ = ('make', 'make_qr', 'make_micro', 'make_sequence', 'QRCode',
-           'QRCodeSequence', 'DataOvercatwError')
+           'QRCodeSequence', 'DataOverflowError')
 
 
 def make(content, error=None, version=None, mode=None, mask=None, encoding=None,

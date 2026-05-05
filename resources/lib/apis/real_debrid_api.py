@@ -8,10 +8,7 @@ from caches.settings_cache import get_setting, set_setting
 from modules.utils import copy2clip, make_tinyurl, make_qrcode
 from modules.source_utils import supported_video_extensions, seas_ep_filter, extras
 from modules.kodi_utils import sleep, ok_dialog, progress_dialog, notification
-try:
-	from modules.kodi_utils import logger
-except ImportError:
-	logger = None
+# from modules.kodi_utils import logger
 
 class RealDebridAPI:
 	def __init__(self):
@@ -155,30 +152,10 @@ class RealDebridAPI:
 		return self._get(url)
 
 	def unrestrict_link(self, link):
-		if not link:
-			if logger: logger('Real-Debrid unrestrict_link', 'Empty link provided')
-			return None
-		if self.token in ('empty_setting', ''):
-			if logger: logger('Real-Debrid unrestrict_link', 'No authentication token')
-			notification('Real-Debrid: Not authenticated', 5000)
-			return None
 		url = 'unrestrict/link'
 		post_data = {'link': link}
 		response = self._post(url, post_data)
-		if not response: return None
-		if not isinstance(response, dict):
-			if logger: logger('Real-Debrid unrestrict_link', 'Response is not a dict: %s' % str(type(response)))
-			return None
-		if 'error' in response:
-			error_msg = response.get('error', 'Unknown error')
-			if logger: logger('Real-Debrid unrestrict_link error', str(error_msg))
-			notification('Real-Debrid Error: %s' % str(error_msg), 5000)
-			return None
 		try: return response['download']
-		except KeyError:
-			if logger: logger('Real-Debrid unrestrict_link', 'No download key in response: %s' % str(response))
-			notification('Real-Debrid: Invalid response format', 5000)
-			return None
 		except: return None
 
 	def add_magnet(self, magnet):
@@ -228,16 +205,17 @@ class RealDebridAPI:
 			if 'error' in torrent: return None
 			torrent_id = torrent['id']
 			self.add_torrent_select(torrent_id, 'all')
+			sleep(1000)
 			torrent_info = self.user_cloud_info_check(torrent_id)
 			if not torrent_info['links'] or 'error' in torrent_info:
 				self.delete_torrent(torrent_id)
 				return None
-			sleep(200)
-			while attempts < 3 and not transfer_finished:
+			sleep(1000)
+			while attempts <= 4 and not transfer_finished:
 				active_count = self.torrents_activeCount()
 				active_list = active_count['list']
 				attempts += 1
-				if info_hash in active_list: sleep(500)
+				if info_hash in active_list: sleep(1000)
 				else: transfer_finished = True
 			if not transfer_finished:
 				self.delete_torrent(torrent_id)
@@ -287,16 +265,17 @@ class RealDebridAPI:
 			torrent = self.add_magnet(magnet_url)
 			torrent_id = torrent['id']
 			self.add_torrent_select(torrent_id, 'all')
+			sleep(1000)
 			torrent_info = self.user_cloud_info_check(torrent_id)
 			if not torrent_info['links'] or 'error' in torrent_info:
 				self.delete_torrent(torrent_id)
 				return None
 			sleep(1000)
-			elapsed_time, transfer_finished = 0, False
-			while elapsed_time <= 4 and not transfer_finished:
+			attempts, transfer_finished = 0, False
+			while attempts <= 4 and not transfer_finished:
 				active_count = self.torrents_activeCount()
 				active_list = active_count['list']
-				elapsed_time += 1
+				attempts += 1
 				if info_hash in active_list: sleep(1000)
 				else: transfer_finished = True
 			if not transfer_finished:
@@ -351,14 +330,8 @@ class RealDebridAPI:
 		if any(value in response.text for value in ('bad_token', 'Bad Request')):
 			if self.refresh_token(): response = self._post(original_url, post_data)
 			else: return None
-		try: 
-			json_response = response.json()
-			return json_response
-		except ValueError:
-			# Response is not valid JSON, log the error
-			if logger: logger('Real-Debrid _post JSON error', 'Status: %s, Text: %s' % (response.status_code, response.text[:200]))
-			return None
-		except: return None
+		try: return response.json()
+		except: return response
 
 	def clear_cache(self, clear_hashes=True):
 		try:

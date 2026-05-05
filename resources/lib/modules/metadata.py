@@ -59,7 +59,7 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 		title, original_title = data_get('title'), data_get('original_title')
 		try:
 			translations = data_get('translations')['translations']
-			english_title = next(i['data']['title'] for i in translations if i['iso_639_1'] == 'en')
+			english_title = next((i['data']['title'] for i in translations if i['iso_639_1'] == 'en'), None)
 		except: english_title = None
 		try: year = str(data_get('release_date').split('-')[0])
 		except: year = ''
@@ -110,7 +110,8 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 				vid_results = videos['results']
 				all_trailers = sorted([i for i in vid_results if i['site'] == 'YouTube'], key=lambda x: x['name'])
 				if all_trailers:
-					trailer = next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
+					trailer = \
+					next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
 					next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer'), None) or \
 					next((youtube_url % i['key'] for i in all_trailers if i['type'] == 'Trailer'), None) or \
 					next((youtube_url % i['key'] for i in all_trailers if 'trailer' in i['name'].lower()), None) or \
@@ -137,7 +138,7 @@ def movie_meta(id_type, media_id, api_key, mpaa_region, current_date, current_ti
 	except: pass
 	return meta
 
-def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_time=None, content_type='all'):
+def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_time=None, is_anime_list=None):
 	if id_type == 'trakt_dict':
 		if media_id.get('tmdb', None): id_type, media_id = 'tmdb_id', media_id['tmdb']
 		elif media_id.get('imdb', None): id_type, media_id = 'imdb_id', media_id['imdb']
@@ -145,7 +146,7 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 		else: id_type, media_id = None, None
 	if media_id == None: return None
 	meta = meta_cache.get('tvshow', id_type, media_id, current_time)
-	if meta: return meta_valid_check(meta, content_type)
+	if meta: return meta_valid_check(meta, is_anime_list)
 	try:
 		if id_type == 'tmdb_id': data = tvshow_details(media_id, api_key)
 		else:
@@ -216,7 +217,7 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 			country_codes = [i['iso_3166_1'] for i in production_countries]
 		content_ratings = data_get('content_ratings', None)
 		if content_ratings:
-			try: mpaa = next(i['rating'] for i in content_ratings['results'] if i['iso_3166_1'] == mpaa_region)
+			try: mpaa = next((i['rating'] for i in content_ratings['results'] if i['iso_3166_1'] == mpaa_region), '')
 			except: pass
 		credits = data_get('credits')
 		if credits:
@@ -242,7 +243,8 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 				vid_results = videos['results']
 				all_trailers = sorted([i for i in vid_results if i['site'] == 'YouTube'], key=lambda x: x['name'])
 				if all_trailers:
-					trailer = next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
+					trailer = \
+					next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer' and 'official trailer' in i['name'].lower()), None) or \
 					next((youtube_url % i['key'] for i in all_trailers if i['official'] and i['type'] == 'Trailer'), None) or \
 					next((youtube_url % i['key'] for i in all_trailers if i['type'] == 'Trailer'), None) or \
 					next((youtube_url % i['key'] for i in all_trailers if 'trailer' in i['name'].lower()), None) or \
@@ -270,7 +272,7 @@ def tvshow_meta(id_type, media_id, api_key, mpaa_region, current_date, current_t
 				'landscape': landscape, 'keywords': keywords, 'rpdb_poster': rpdb_poster, 'short_cast': short_cast}
 		meta_cache.set('tvshow', id_type, meta, tvshow_expiry(current_date, meta), current_time)
 	except: pass
-	return meta_valid_check(meta, content_type)
+	return meta_valid_check(meta, is_anime_list)
 
 def movieset_meta(media_id, api_key, current_time=None):
 	if media_id == None: return None
@@ -417,11 +419,9 @@ def tvshow_expiry(current_date, meta):
 	except: expiration = 96
 	return expiration
 
-def meta_valid_check(meta, content_type):
-	if content_type == 'all': return meta
-	is_anime = is_anime_check(meta)
-	if content_type == 'anime' and not is_anime: return {}
-	if content_type == 'tv' and is_anime: return {}
+def meta_valid_check(meta, is_anime_list):
+	if is_anime_list == None: return meta
+	if is_anime_check(meta) != is_anime_list: meta = {}
 	return meta
 
 def is_anime_check(meta=None, tmdb_id=None):

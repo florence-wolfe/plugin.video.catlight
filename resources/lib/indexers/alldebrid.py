@@ -128,7 +128,7 @@ def browse_ad_cloud(folder_id):
 				info_tag.setPlot(' ')
 				yield (url, listitem, False)
 			except: pass
-	try: links = AllDebrid.browse_folder(folder_id)
+	try: links = AllDebrid.parse_magnet(transfer_id=folder_id)[1]
 	except: links = []
 	handle = int(sys.argv[1])
 	icon, fanart = kodi_utils.get_icon('alldebrid'), kodi_utils.get_addon_fanart()
@@ -141,8 +141,8 @@ def resolve_ad(params):
 	url = params['url']
 	resolved_link = AllDebrid.unrestrict_link(url)
 	if params.get('play', 'false') != 'true' : return resolved_link
-	from modules.player import CatLightPlayer
-	CatLightPlayer().run(resolved_link, 'video')
+	from modules.player import CatlightPlayer
+	CatlightPlayer().run(resolved_link, 'video')
 
 def ad_delete(file_id):
 	if not kodi_utils.confirm_dialog(): return
